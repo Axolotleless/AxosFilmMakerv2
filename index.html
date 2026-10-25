@@ -1,0 +1,3431 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Axo's Film Maker v2 - Docs &amp; Guide</title>
+<meta name="description" content="Documentation and a friendly guide for Axo's Film Maker v2: a Roblox animation, camera and cutscene studio. Getting started, tutorials, shortcuts, exporting and the AxoFilmPlayer API.">
+<meta name="theme-color" content="#18181d">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2318181d'/%3E%3Crect x='9' y='9' width='14' height='14' transform='rotate(45 16 16)' fill='%23ffc828'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Montserrat:wght@400;500;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #141418;
+  --bar: #18181d;
+  --panel: #202026;
+  --panel2: #2c2c34;
+  --rowa: #26262d;
+  --rowb: #222228;
+  --btn: #3c3c46;
+  --btn-on: #466ee6;
+  --text: #ebebf0;
+  --dim: #9696a2;
+  --accent: #5078fa;
+  --line: #484856;
+  --key: #e1e1e6;
+  --key-sel: #ffc828;
+  --key-cam: #6ebeff;
+  --key-evt: #e678ff;
+  --key-obj: #64dca0;
+  --key-fx: #ffa046;
+  --playhead: #ffdc00;
+  --green: #289650;
+  --red: #aa3737;
+  --rig-head: #1c2846;
+  --obj-head: #223c32;
+  --pixel: "Press Start 2P", "Courier New", monospace;
+  --sans: "Montserrat", "Gotham", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "JetBrains Mono", "Source Code Pro", Consolas, Menlo, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 76px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 15px/1.7 var(--sans);
+  background-image: radial-gradient(circle at 1px 1px, #22222a 1px, transparent 0);
+  background-size: 22px 22px;
+}
+
+a {
+  color: var(--key-cam);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+::selection {
+  background: var(--accent);
+  color: #fff;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--btn);
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.top {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: 60px;
+  background: var(--bar);
+  border-bottom: 1px solid var(--line);
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 0 14px;
+}
+
+.brandbox {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.brand {
+  font-family: var(--pixel);
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  color: var(--text);
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.6);
+  display: block;
+  white-space: nowrap;
+}
+
+.brand:hover {
+  text-decoration: none;
+}
+
+.brand span {
+  color: var(--key-sel);
+  margin-left: 6px;
+}
+
+.status {
+  font-size: 11.5px;
+  color: var(--dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 5px;
+  transition: opacity 0.25s;
+}
+
+.searchbox {
+  position: relative;
+  flex: 0 1 430px;
+  width: 430px;
+}
+
+.searchbox input {
+  width: 100%;
+  height: 34px;
+  background: var(--btn);
+  border: 1px solid transparent;
+  border-radius: 2px;
+  color: var(--text);
+  font: 13px var(--mono);
+  padding: 0 44px 0 12px;
+  outline: none;
+}
+
+.searchbox input::placeholder {
+  color: var(--dim);
+}
+
+.searchbox input:focus {
+  border-color: var(--accent);
+  background: #35353f;
+}
+
+.searchbox .slash {
+  position: absolute;
+  right: 9px;
+  top: 7px;
+  font: 11px var(--mono);
+  color: var(--dim);
+  border: 1px solid var(--line);
+  padding: 0 6px;
+  line-height: 18px;
+  pointer-events: none;
+}
+
+.results {
+  position: absolute;
+  top: 40px;
+  right: 0;
+  left: 0;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.55);
+  max-height: min(70vh, 560px);
+  overflow-y: auto;
+  display: none;
+}
+
+.results.show {
+  display: block;
+}
+
+.results .rh {
+  background: var(--panel2);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  color: var(--dim);
+}
+
+.results a.r {
+  display: block;
+  padding: 9px 12px;
+  color: var(--text);
+  border-bottom: 1px solid #2a2a32;
+  background: var(--rowa);
+}
+
+.results a.r:nth-of-type(even) {
+  background: var(--rowb);
+}
+
+.results a.r.sel,
+.results a.r:hover {
+  background: var(--accent);
+  text-decoration: none;
+}
+
+.results .rt {
+  font-weight: 700;
+  font-size: 13.5px;
+  line-height: 1.3;
+}
+
+.results .rp {
+  font-size: 11px;
+  color: var(--dim);
+  margin-left: 6px;
+  font-weight: 500;
+}
+
+.results a.sel .rp,
+.results a:hover .rp {
+  color: #dbe3ff;
+}
+
+.results .rs {
+  font-size: 12.5px;
+  color: #b7b7c4;
+  line-height: 1.45;
+  margin-top: 2px;
+}
+
+.results a.sel .rs,
+.results a:hover .rs {
+  color: #eef1ff;
+}
+
+.results mark {
+  background: transparent;
+  color: var(--key-sel);
+  font-weight: 700;
+}
+
+.results a.sel mark,
+.results a:hover mark {
+  color: #fff;
+  text-decoration: underline;
+}
+
+.results .none {
+  padding: 18px 14px;
+  color: var(--dim);
+  font-size: 13px;
+}
+
+.results .none b {
+  color: var(--text);
+}
+
+.bar {
+  position: fixed;
+  inset: auto 0 0 0;
+  height: 46px;
+  background: var(--bar);
+  border-top: 1px solid var(--line);
+  z-index: 60;
+}
+
+.bar-in {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.bar-in::-webkit-scrollbar {
+  display: none;
+}
+
+.b {
+  flex: 0 0 auto;
+  height: 32px;
+  padding: 0 11px;
+  background: var(--btn);
+  color: var(--text);
+  border: 0;
+  border-radius: 0;
+  font: 500 12.5px var(--sans);
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.b:hover {
+  background: #4a4a56;
+  text-decoration: none;
+}
+
+.b.on {
+  background: var(--btn-on);
+}
+
+.b.green {
+  background: var(--green);
+}
+
+.b.red {
+  background: var(--red);
+}
+
+.bar .dv {
+  flex: 0 0 1px;
+  height: 22px;
+  background: var(--line);
+  margin: 0 3px;
+}
+
+.shell {
+  display: grid;
+  grid-template-columns: 276px minmax(0, 1fr);
+  gap: 14px;
+  max-width: 1260px;
+  margin: 0 auto;
+  padding: 74px 14px 62px;
+}
+
+.side {
+  position: sticky;
+  top: 74px;
+  height: calc(100vh - 74px - 62px);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  z-index: 40;
+}
+
+.wt {
+  height: 26px;
+  background: var(--panel2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4px 0 10px;
+  font-weight: 700;
+  font-size: 12.5px;
+  flex: 0 0 auto;
+}
+
+.wt .x {
+  background: none;
+  border: 0;
+  color: var(--text);
+  font: 700 16px var(--sans);
+  width: 26px;
+  height: 26px;
+  cursor: pointer;
+}
+
+.wt .x {
+  display: none;
+}
+
+.side .tree {
+  overflow-y: auto;
+  flex: 1;
+  padding-bottom: 14px;
+}
+
+.side .gh {
+  background: var(--rig-head);
+  font-weight: 700;
+  font-size: 12px;
+  padding: 5px 10px;
+  margin-top: 1px;
+  letter-spacing: 0.2px;
+}
+
+.side .gh i {
+  font-style: normal;
+  color: var(--dim);
+  margin-right: 4px;
+}
+
+.side a.row,
+.side a.sub {
+  display: block;
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.35;
+  padding: 5px 10px;
+  border-bottom: 1px solid #1b1b20;
+}
+
+.side a.row:nth-of-type(odd) {
+  background: var(--rowa);
+}
+
+.side a.row:nth-of-type(even) {
+  background: var(--rowb);
+}
+
+.side a.row:hover,
+.side a.sub:hover {
+  text-decoration: none;
+  background: #30303a;
+}
+
+.side a.row.active {
+  background: var(--accent);
+  font-weight: 700;
+}
+
+.side .subs {
+  display: none;
+  background: #1b1b20;
+}
+
+.side .subs.open {
+  display: block;
+}
+
+.side a.sub {
+  padding: 3px 10px 3px 26px;
+  font-size: 12px;
+  color: var(--dim);
+  border-bottom: 0;
+}
+
+.side a.sub.active {
+  color: var(--key-sel);
+  font-weight: 600;
+}
+
+.side .foot {
+  border-top: 1px solid var(--line);
+  padding: 8px 10px;
+  font-size: 11.5px;
+  color: var(--dim);
+  flex: 0 0 auto;
+}
+
+.scrim {
+  display: none;
+}
+
+main {
+  min-width: 0;
+}
+
+.win {
+  background: rgba(32, 32, 38, 0.96);
+  border: 1px solid var(--line);
+  margin-bottom: 14px;
+}
+
+.win-t {
+  background: var(--panel2);
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 12px;
+}
+
+.win-t h2 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.win-t .grp {
+  font-size: 11px;
+  color: var(--dim);
+  margin-left: 10px;
+  font-weight: 500;
+}
+
+.wb {
+  width: 30px;
+  height: 30px;
+  background: none;
+  border: 0;
+  color: var(--text);
+  font: 700 17px var(--sans);
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+
+.wb:hover {
+  background: var(--btn);
+}
+
+.win-b {
+  padding: 16px 20px 20px;
+}
+
+.win.collapsed .win-b {
+  display: none;
+}
+
+.win.flash {
+  animation: flash 1.1s ease-out;
+}
+
+@keyframes flash {
+  0% {
+    box-shadow: 0 0 0 2px var(--key-sel);
+  }
+  100% {
+    box-shadow: 0 0 0 2px transparent;
+  }
+}
+
+.win-b > p,
+.win-b > ul,
+.win-b > ol {
+  max-width: 72ch;
+}
+
+.win-b p {
+  margin: 0 0 12px;
+}
+
+.win-b h3 {
+  background: var(--panel2);
+  margin: 26px -20px 12px;
+  padding: 3px 20px;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  line-height: 1.9;
+}
+
+.win-b h3:first-child {
+  margin-top: 0;
+}
+
+.win-b h4 {
+  margin: 18px 0 6px;
+  font-size: 14px;
+}
+
+.win-b ul,
+.win-b ol {
+  padding-left: 22px;
+  margin: 0 0 12px;
+}
+
+.win-b li {
+  margin: 3px 0;
+}
+
+.win-b li::marker {
+  color: var(--accent);
+}
+
+code {
+  font: 12.5px var(--mono);
+  background: #17171c;
+  border: 1px solid #2c2c35;
+  padding: 1px 5px;
+  color: #cdd5ff;
+}
+
+pre {
+  position: relative;
+  background: #121216;
+  border: 1px solid #2c2c35;
+  border-left: 3px solid var(--accent);
+  margin: 0 0 14px;
+  padding: 12px 14px;
+  overflow-x: auto;
+  font: 12.5px/1.6 var(--mono);
+  tab-size: 4;
+}
+
+pre code {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: #d6d9e6;
+  font-size: inherit;
+}
+
+pre .k {
+  color: #ff8fb1;
+}
+
+pre .s {
+  color: #a8e4a0;
+}
+
+pre .n {
+  color: #ffc07a;
+}
+
+pre .f {
+  color: #86c5ff;
+}
+
+pre .c {
+  color: #6c7089;
+}
+
+.copy {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: var(--btn);
+  color: var(--text);
+  border: 0;
+  font: 500 11px var(--sans);
+  padding: 3px 9px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+pre:hover .copy,
+.copy:focus {
+  opacity: 1;
+}
+
+.copy.done {
+  background: var(--green);
+  opacity: 1;
+}
+
+kbd {
+  font: 600 11.5px var(--mono);
+  background: #34343e;
+  border: 1px solid #50505e;
+  border-bottom-width: 2px;
+  color: var(--text);
+  padding: 0 6px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+.ui {
+  font: 500 12.5px var(--sans);
+  background: var(--btn);
+  padding: 1px 8px;
+  color: var(--text);
+  white-space: nowrap;
+  display: inline-block;
+  line-height: 1.55;
+}
+
+.ui.on {
+  background: var(--btn-on);
+}
+
+.ui.g {
+  background: var(--green);
+}
+
+.ui.r {
+  background: var(--red);
+}
+
+.tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 0 7px;
+  line-height: 1.6;
+  color: #101014;
+  background: var(--key);
+}
+
+.tag.cam {
+  background: var(--key-cam);
+}
+
+.tag.evt {
+  background: var(--key-evt);
+}
+
+.tag.obj {
+  background: var(--key-obj);
+}
+
+.tag.fx {
+  background: var(--key-fx);
+}
+
+.tag.sel {
+  background: var(--key-sel);
+}
+
+.callout {
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--accent);
+  background: #1b1b21;
+  padding: 10px 14px;
+  margin: 0 0 14px;
+  max-width: 78ch;
+}
+
+.callout > :last-child {
+  margin-bottom: 0;
+}
+
+.callout .ct {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+  color: var(--key-cam);
+}
+
+.callout.tip {
+  border-left-color: var(--key-obj);
+}
+
+.callout.tip .ct {
+  color: var(--key-obj);
+}
+
+.callout.warn {
+  border-left-color: var(--key-sel);
+}
+
+.callout.warn .ct {
+  color: var(--key-sel);
+}
+
+.tw {
+  overflow-x: auto;
+  margin: 0 0 14px;
+  border: 1px solid #2c2c35;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 13.5px;
+}
+
+th {
+  text-align: left;
+  background: var(--panel2);
+  font-size: 11.5px;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  white-space: nowrap;
+}
+
+td {
+  padding: 7px 12px;
+  vertical-align: top;
+  border-top: 1px solid #2a2a32;
+}
+
+tbody tr:nth-child(odd) td {
+  background: var(--rowa);
+}
+
+tbody tr:nth-child(even) td {
+  background: var(--rowb);
+}
+
+td:first-child {
+  white-space: nowrap;
+}
+
+td.wrap {
+  white-space: normal;
+}
+
+ol.steps {
+  list-style: none;
+  counter-reset: st;
+  padding: 0;
+  max-width: 78ch;
+}
+
+ol.steps > li {
+  counter-increment: st;
+  position: relative;
+  padding: 2px 0 12px 44px;
+  margin: 0;
+}
+
+ol.steps > li::before {
+  content: counter(st);
+  position: absolute;
+  left: 0;
+  top: 2px;
+  width: 30px;
+  height: 30px;
+  background: var(--accent);
+  color: #fff;
+  font: 700 13px/30px var(--sans);
+  text-align: center;
+}
+
+ol.steps > li:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: 14px;
+  top: 34px;
+  bottom: 2px;
+  width: 2px;
+  background: var(--line);
+}
+
+ol.steps > li > b:first-child {
+  display: block;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 8px;
+  margin: 0 0 6px;
+}
+
+.card {
+  display: block;
+  background: var(--rowa);
+  border: 1px solid var(--line);
+  padding: 11px 14px;
+  color: var(--text);
+}
+
+.card:hover {
+  background: #30303a;
+  border-color: var(--accent);
+  text-decoration: none;
+}
+
+.card b {
+  display: block;
+  font-size: 13.5px;
+}
+
+.card span {
+  font-size: 12.5px;
+  color: var(--dim);
+  line-height: 1.45;
+  display: block;
+  margin-top: 2px;
+}
+
+.hero {
+  margin: 0 -20px 16px;
+  padding: 22px 20px 18px;
+  background: linear-gradient(180deg, #1a1d2e 0%, rgba(32, 32, 38, 0) 100%);
+  border-bottom: 1px solid #2c2c35;
+}
+
+.hero h1 {
+  font-family: var(--pixel);
+  font-weight: 400;
+  font-size: clamp(16px, 3.2vw, 26px);
+  line-height: 1.5;
+  margin: 0 0 4px;
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.6);
+}
+
+.hero h1 span {
+  color: var(--key-sel);
+}
+
+.hero p {
+  max-width: 62ch;
+  color: #c9c9d4;
+  margin: 8px 0 0;
+}
+
+.mtl {
+  margin: 18px 0 0;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  max-width: 760px;
+  user-select: none;
+}
+
+.mtl-tr {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--panel2);
+  padding: 4px 6px;
+  flex-wrap: wrap;
+}
+
+.mtl-tr .b {
+  height: 24px;
+  padding: 0 9px;
+  font-size: 12px;
+}
+
+.mtl-time {
+  font: 12.5px var(--mono);
+  margin-left: 8px;
+  color: var(--text);
+}
+
+.mtl-ev {
+  margin-left: auto;
+  font-size: 11.5px;
+  color: var(--key-evt);
+  font-weight: 600;
+  min-height: 1em;
+}
+
+.mtl-g {
+  display: grid;
+  grid-template-columns: 112px 1fr;
+}
+
+.mtl-n {
+  background: var(--panel2);
+  font-size: 11.5px;
+  font-weight: 500;
+  padding: 0 10px;
+  height: 24px;
+  line-height: 24px;
+  border-top: 1px solid #1b1b20;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mtl-n.head {
+  background: var(--rig-head);
+  font-weight: 700;
+}
+
+.mtl-r {
+  position: relative;
+  height: 24px;
+  border-top: 1px solid #1b1b20;
+}
+
+.mtl-r.ruler {
+  background: var(--panel2);
+  cursor: ew-resize;
+}
+
+.mtl-r.ruler span {
+  position: absolute;
+  top: 3px;
+  font: 10px var(--mono);
+  color: var(--dim);
+  padding-left: 3px;
+  border-left: 1px solid var(--dim);
+  height: 18px;
+  line-height: 10px;
+}
+
+.mtl-r.a {
+  background: var(--rowa);
+}
+
+.mtl-r.b2 {
+  background: var(--rowb);
+}
+
+.dia {
+  position: absolute;
+  top: 7px;
+  width: 10px;
+  height: 10px;
+  margin-left: -5px;
+  transform: rotate(45deg);
+  background: var(--key);
+  cursor: pointer;
+}
+
+.dia.cam {
+  background: var(--key-cam);
+}
+
+.dia.evt {
+  background: var(--key-evt);
+}
+
+.dia.sel {
+  background: var(--key-sel);
+}
+
+.mtl-ph {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  margin-left: -1px;
+  background: var(--playhead);
+  pointer-events: none;
+}
+
+.mtl-pw {
+  position: relative;
+  grid-column: 2;
+  grid-row: 1 / span 5;
+  pointer-events: none;
+}
+
+.mtl-area {
+  position: relative;
+}
+
+.lab {
+  background: #17171c;
+  border: 1px solid var(--line);
+  max-width: 760px;
+  margin: 0 0 14px;
+}
+
+.lab-body {
+  display: grid;
+  grid-template-columns: minmax(220px, 300px) 1fr;
+  gap: 14px;
+  padding: 12px;
+}
+
+.lab svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  background: var(--rowb);
+  border: 1px solid #2c2c35;
+}
+
+.lab .row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.lab .row .b {
+  height: 26px;
+  padding: 0 9px;
+  font-size: 12px;
+}
+
+.lab .lbl {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin: 0 0 4px;
+}
+
+.lab .trk {
+  position: relative;
+  height: 22px;
+  background: var(--rowb);
+  border: 1px solid #2c2c35;
+  margin-top: 6px;
+}
+
+.lab .dot {
+  position: absolute;
+  top: 3px;
+  width: 14px;
+  height: 14px;
+  margin-left: -7px;
+  background: var(--key-sel);
+  transform: rotate(45deg);
+}
+
+.lab .bz {
+  display: none;
+}
+
+.lab .bz.show {
+  display: block;
+}
+
+.lab .badge {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  display: inline-block;
+}
+
+.lab .badge.nat {
+  background: #1d3b2b;
+  color: var(--key-obj);
+}
+
+.lab .badge.bake {
+  background: #3b2e1a;
+  color: var(--key-fx);
+}
+
+.lab .bzv {
+  font: 12px var(--mono);
+  color: var(--dim);
+  margin: 2px 0 8px;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin: 0 0 14px;
+  font-size: 13px;
+}
+
+.legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.legend i {
+  width: 10px;
+  height: 10px;
+  transform: rotate(45deg);
+  display: inline-block;
+}
+
+.endnav {
+  text-align: center;
+  font-size: 12.5px;
+  color: var(--dim);
+  padding: 18px 0 8px;
+}
+
+@media (max-width: 960px) {
+  .shell {
+    grid-template-columns: minmax(0, 1fr);
+    padding-top: 74px;
+  }
+
+  .side {
+    position: fixed;
+    top: 60px;
+    bottom: 46px;
+    left: 0;
+    height: auto;
+    width: min(310px, 88vw);
+    transform: translateX(-105%);
+    transition: transform 0.2s;
+    box-shadow: 8px 0 30px rgba(0, 0, 0, 0.5);
+  }
+
+  .side.open {
+    transform: none;
+  }
+
+  .wt .x {
+    display: block;
+  }
+
+  .scrim.show {
+    display: block;
+    position: fixed;
+    inset: 60px 0 46px 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 35;
+  }
+
+  .searchbox {
+    flex-basis: 300px;
+    width: 300px;
+  }
+
+  .status {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .top {
+    gap: 8px;
+    padding: 0 8px;
+  }
+
+  .brand {
+    font-size: 10px;
+  }
+
+  .brand span {
+    display: none;
+  }
+
+  .searchbox {
+    flex: 1 1 auto;
+    width: auto;
+  }
+
+  .win-b {
+    padding: 14px 14px 16px;
+  }
+
+  .win-b h3 {
+    margin-left: -14px;
+    margin-right: -14px;
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .hero {
+    margin-left: -14px;
+    margin-right: -14px;
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .lab-body {
+    grid-template-columns: 1fr;
+  }
+
+  .mtl-g {
+    grid-template-columns: 78px 1fr;
+  }
+
+  .searchbox .slash {
+    display: none;
+  }
+
+  .searchbox input {
+    padding-right: 10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .win.flash {
+    animation: none;
+  }
+
+  .side,
+  .status {
+    transition: none;
+  }
+}
+
+:not(pre) > code {
+  overflow-wrap: anywhere;
+}
+
+.results .egg {
+  padding: 16px 14px;
+  font: 600 15px var(--mono);
+  color: var(--key-sel);
+  background: var(--rowa);
+  border-bottom: 1px solid #2a2a32;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  20%, 60% {
+    transform: translateX(-5px);
+  }
+  40%, 80% {
+    transform: translateX(5px);
+  }
+}
+
+@keyframes hue {
+  to {
+    filter: hue-rotate(360deg);
+  }
+}
+
+.brand.spin {
+  display: inline-block;
+  animation: spin 0.9s ease-in-out;
+}
+
+.win.shake {
+  animation: shake 0.6s;
+}
+
+kbd.press {
+  transform: translateY(2px);
+  border-bottom-width: 1px;
+}
+
+body.konami .dia,
+body.konami .lab .dot,
+body.konami .legend i {
+  animation: hue 1.2s linear infinite;
+}
+
+body.konami .mtl-ph {
+  animation: hue 1.2s linear infinite;
+}
+
+.status {
+  cursor: pointer;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand.spin,
+  .win.shake,
+  body.konami .dia,
+  body.konami .lab .dot,
+  body.konami .legend i,
+  body.konami .mtl-ph {
+    animation: none;
+  }
+}
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 62px;
+  transform: translate(-50%, 12px);
+  max-width: min(92vw, 420px);
+  background: var(--panel2);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--key-sel);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  padding: 9px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s, transform 0.18s;
+  z-index: 90;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brandbox">
+    <a class="brand" href="#overview">Axo's Film Maker<span>v2 docs</span></a>
+    <div class="status" id="status">RMB fly (WASD QE) | MMB orbit | Shift+MMB pan | wheel dolly | LMB select | G/R tool | I key | Space play | F focus</div>
+  </div>
+  <div class="searchbox">
+    <input id="q" type="search" placeholder="search the docs: ik, export, shake, undo..." autocomplete="off" spellcheck="false" aria-label="Search the documentation">
+    <span class="slash">/</span>
+    <div class="results" id="results" role="listbox"></div>
+  </div>
+</header>
+
+<div class="scrim" id="scrim"></div>
+
+<div class="shell">
+  <aside class="side" id="side" aria-label="Contents">
+    <div class="wt"><span>Contents</span><button class="x" id="sideclose" aria-label="Close contents">x</button></div>
+    <nav class="tree" id="tree"></nav>
+    <div class="foot">The official guide. Written from the actual scripts, so the button names match what you see.</div>
+  </aside>
+
+  <main id="content">
+
+<section class="win" id="overview" data-group="Start here">
+  <header class="win-t"><h2>Welcome</h2><button class="wb" data-act="collapse" aria-label="Collapse section">-</button></header>
+  <div class="win-b">
+    <div class="hero">
+      <h1>Axo's <span>Film Maker</span> v2</h1>
+      <p>An animation, camera and cutscene tool built for Studio Lite. Pose a rig, set keys on a timeline, fly a camera, add shake and events, then export it or play it back in-game.</p>
+      <div class="mtl" id="miniTL" aria-label="Interactive demo of the timeline"></div>
+    </div>
+
+    <p>That little timeline above is a toy version of the real one. Click the ruler, press play, click a diamond. If it feels familiar, you're already halfway there.</p>
+
+    <h3 id="what-it-does" data-kw="features capabilities overview about what is">What it does</h3>
+    <ul>
+      <li><b>Poses anything.</b> Real rigs with Motor6D joints, or a pile of loose parts. Move and rotate with a gizmo, or use IK so a hand stays where you put it.</li>
+      <li><b>A proper timeline.</b> Diamonds for keyframes, a summary track, zoom, a view bar, copy and paste, undo, snapping to your FPS.</li>
+      <li><b>Easing you can see.</b> Sine, Quad, Cubic, Elastic, Bounce and friends, plus a drag-the-handles Bezier editor.</li>
+      <li><b>A real camera.</b> Key a camera track, look through it, check it in a 16:9 preview window, and layer on shake, roll and FOV punches.</li>
+      <li><b>Animate any property.</b> Lights, colors, transparency, Lighting, post effects, GUI, sounds. If it has a value, you can put a key on it.</li>
+      <li><b>Physics baking.</b> Let a ragdoll fall for real, then turn the result into keyframes.</li>
+      <li><b>Two ways out.</b> Standard Roblox <code>KeyframeSequence</code> objects, or a single "film" that the tiny <code>AxoFilmPlayer</code> script plays for you.</li>
+    </ul>
+
+    <h3 id="where-to-go" data-kw="start begin new where links">Where to go next</h3>
+    <div class="cards">
+      <a class="card" href="#install"><b>Install it</b><span>Which scripts, where they go, what to expect.</span></a>
+      <a class="card" href="#first-animation"><b>Your first animation</b><span>Ten steps from empty timeline to exported clip.</span></a>
+      <a class="card" href="#tour"><b>Interface tour</b><span>The windows, the bottom bar, the status line.</span></a>
+      <a class="card" href="#shortcuts"><b>Shortcuts</b><span>Every key, mouse button and touch gesture.</span></a>
+      <a class="card" href="#player"><b>Play it in your game</b><span>AxoFilmPlayer: a few lines of Lua.</span></a>
+      <a class="card" href="#troubleshooting"><b>Something's off</b><span>Messages you might see and what they mean.</span></a>
+    </div>
+
+    <div class="callout tip"><span class="ct">Tip</span>Press <kbd>/</kbd> anywhere on this site to search. Try <i>undo</i>, <i>ik</i>, <i>shake</i>, <i>marker</i> or <i>export</i>.</div>
+  </div>
+</section>
+
+<section class="win" id="install" data-group="Start here" data-kw="setup installation scripts localscript screengui parts order load">
+  <header class="win-t"><h2>Install and set up</h2><button class="wb" data-act="collapse" aria-label="Collapse section">-</button></header>
+  <div class="win-b">
+    <p>Film Maker v2 is made of several LocalScripts that cooperate. They share one table (<code>_G.FilmMaker</code>), and each one waits politely for the one before it, so the order you add them in doesn't matter.</p>
+
+    <h3 id="the-scripts" data-kw="files list parts part 1 part 2 part 3 part 4 physics preview player">The scripts</h3>
+    <div class="tw"><table>
+      <thead><tr><th>Script</th><th>What it adds</th><th>Waits for</th></tr></thead>
+      <tbody>
+        <tr><td>Part 1</td><td class="wrap">The core: rigs and bones, IK, the move/rotate gizmo, undo and redo, the free camera.</td><td>Nothing, it starts everything</td></tr>
+        <tr><td>Part 2</td><td class="wrap">The windows (Timeline, Properties, Camera, Sequence), the bottom bar, and <span class="ui">EXPORT</span> / <span class="ui">Import</span> for KeyframeSequences.</td><td>Part 1</td></tr>
+        <tr><td>Part 3</td><td class="wrap">The timeline itself, all mouse, keyboard and touch input, and the main update loop.</td><td>Part 2</td></tr>
+        <tr><td>Part 4</td><td class="wrap">Explorer, Object, Easing and Camera FX windows, property tracks, <span class="ui g">Export Film</span> and <span class="ui">Import Film</span>.</td><td>Part 3</td></tr>
+        <tr><td>Physics</td><td class="wrap">The Physics window for baking ragdolls and falling objects into keys.</td><td>Part 4</td></tr>
+        <tr><td>Preview</td><td class="wrap">The Preview window, the film-camera gizmo (<span class="ui">Edit Cam</span>), the 3D frustum and path guides.</td><td>Part 4</td></tr>
+        <tr><td>AxoFilmPlayer</td><td class="wrap">Stand-alone playback for exported films. It doesn't need the editor at all.</td><td>Nothing</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3 id="install-steps" data-kw="how to put scripts roblox studio paste">Putting it together</h3>
+    <ol class="steps">
+      <li><b>Make a ScreenGui.</b>Put a <code>ScreenGui</code> where your GUI lives (for example StarterGui) and give it any name you like.</li>
+      <li><b>Add a LocalScript per part.</b>Create one LocalScript inside that ScreenGui for each of Part 1, 2, 3, 4, Physics and Preview, and paste the matching code in. Names don't matter.</li>
+      <li><b>Press play.</b>The title appears top-left, a status line shows hints under it, and the Timeline window opens along the bottom with the bar below it.</li>
+    </ol>
+    <p>Part 1 reads <code>script.Parent</code> to find the ScreenGui. If its parent isn't a ScreenGui it quietly makes its own, <code>FilmMakerGui</code>, inside PlayerGui, so the others still find everything through <code>_G.FilmMaker</code>.</p>
+
+    <div class="callout warn"><span class="ct">Heads up</span>Film Maker takes over your camera (it sets it to Scriptable) and anchors the parts of any rig you load. Both are put back when you remove the rig or close the tool with the red <span class="ui r">X</span> at the end of the bottom bar.</div>
+
+    <div class="callout warn"><span class="ct">Films only</span>AxoFilmPlayer plays <b>films</b> and nothing else. If you exported a <b>KeyframeSequence</b> (the plain <span class="ui g">EXPORT</span> button), play it with Roblox's <code>KeyframeSequencePlayer</code> instead.</div>
+
+    <h3 id="player-install" data-kw="axofilmplayer playback ingame game runtime">The player (only for games that play films)</h3>
+    <p>Put the AxoFilmPlayer code in a LocalScript that runs where films should play, for example inside StarterPlayerScripts. It publishes itself as <code>_G.AxoFilmPlayer</code> and sets <code>.Ready = true</code>. Details are in <a href="#player">Playing films in your game</a>.</p>
+
+    <h3 id="load-warnings" data-kw="did not load warn output wait timeout">If a part says it didn't load</h3>
+    <p>Each part waits up to 30 seconds for the previous one (40 for Physics and Preview). If it gives up you'll see a warning in the Output, like <i>"Film Maker part 2: part 1 did not load"</i>. That almost always means the earlier script errored or is missing. Fix that one first. More in <a href="#troubleshooting">Troubleshooting</a>.</p>
+  </div>
+</section>
+
+<section class="win" id="first-animation" data-group="Start here" data-kw="tutorial walkthrough beginner quick start basics begin guide">
+  <header class="win-t"><h2>Your first animation</h2><button class="wb" data-act="collapse" aria-label="Collapse section">-</button></header>
+  <div class="win-b">
+    <p>Let's make a model wave its arm, hold it, and put it back down. It takes about five minutes, and it covers ninety percent of how you'll use the tool.</p>
+
+    <ol class="steps">
+      <li><b>Load a rig.</b>Click <span class="ui">Load Rig</span> in the bottom bar, then click your model in the world. The status line says <i>Loaded rig: Name (N tracks)</i>, the camera swoops over to it, and each bone gets a track. Rigs are the way to go for everything, loose parts included (group them in a Model first).</li>
+      <li><b>Get your bearings.</b>Hold the middle mouse button to orbit, scroll to zoom, hold the right mouse button and use <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd><kbd>Q</kbd><kbd>E</kbd> to fly. On a phone, drag to move the camera and pinch with two fingers.</li>
+      <li><b>Lock in a starting pose.</b>Open the <span class="ui">Properties</span> window and press <span class="ui">Key Rig</span> while the playhead is at 0. That puts a key on every bone, so the rig has a clean "before".</li>
+      <li><b>Move the playhead.</b>Click on the ruler at about one second. The yellow line follows you.</li>
+      <li><b>Pose a bone.</b>Click the upper arm in the world (or its row in the timeline). Press <kbd>R</kbd> for rotate and drag one of the orange arcs. Because <span class="ui on">Auto-Key: On</span> is lit, a diamond appears on that track the moment you let go.</li>
+      <li><b>Do it again later.</b>Click the ruler at two seconds and pose the arm a bit higher, at three seconds put it back to the start. Tip: copy and paste a pose with <span class="ui">Copy Rig Pose</span> and <span class="ui">Paste Rig Pose</span>.</li>
+      <li><b>Watch it.</b>Press <kbd>Space</kbd>. The timeline loops by default. Press <kbd>Space</kbd> again to stop, or step one frame at a time with the arrow keys.</li>
+      <li><b>Give it some weight.</b>Click a diamond (or box-select several), open <span class="ui">Easing</span> and try <b>Quad</b> + <b>InOut</b>. Notice how the arm eases instead of sliding.</li>
+      <li><b>Trim to fit.</b>The default length is 10 seconds. Press <span class="ui">Trim End</span> in the timeline to snap the length to your last key.</li>
+      <li><b>Export.</b>Press the green <span class="ui g">EXPORT</span> button. A KeyframeSequence appears under <code>workspace.CurrentCamera</code>. Want camera work, shake and property animation too? Use <span class="ui g">Export Film</span> instead.</li>
+    </ol>
+
+    <div class="callout tip"><span class="ct">Tip</span>Made a mess? <kbd>Ctrl</kbd>+<kbd>Z</kbd> undoes it (up to 60 steps), <kbd>Ctrl</kbd>+<kbd>Y</kbd> or <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Z</kbd> redoes it.</div>
+    <div class="callout"><span class="ct">Good to know</span>There's no save button. Your project lives in memory while the tool is open. <span class="ui g">Export Film</span> and <span class="ui">Import Film</span> are how you save and reload your work. See <a href="#faq">FAQ</a>.</div>
+  </div>
+</section>
+
+<section class="win" id="tour" data-group="Start here" data-kw="ui layout windows bottom bar panels buttons interface drag resize">
+  <header class="win-t"><h2>Interface tour</h2><button class="wb" data-act="collapse" aria-label="Collapse section">-</button></header>
+  <div class="win-b">
+    <h3 id="title-status" data-kw="status line hint message text top left">Title and status line</h3>
+    <p>Top-left shows the title and a single line of text under it. That line is the tool's voice: it shows hints (like the shortcuts list) and, for five seconds after something happens, a message such as <i>Camera keyed</i> or <i>Copied 3 key(s)</i>. When it's quiet it falls back to the hint.</p>
+
+    <h3 id="bottom-bar" data-kw="toolbar buttons groups scroll">The bottom bar</h3>
+    <p>The strip along the bottom is your toolbox. It scrolls sideways when it runs out of room. Reading left to right, it's grouped like this:</p>
+    <ul>
+      <li><b>Loading:</b> <span class="ui">Load Rig</span>, <span class="ui">Parts Folder</span> (legacy)</li>
+      <li><b>Tools:</b> <span class="ui">Move (G)</span>, <span class="ui">Rotate (R)</span>, <span class="ui">Space: World</span>, <span class="ui">Snap: On</span>, <span class="ui">Mode: FK</span>, <span class="ui">IK -</span> <span class="ui">Chain: 2</span> <span class="ui">IK +</span>, <span class="ui">Grab: End</span>, <span class="ui">Flip Bend</span></li>
+      <li><b>Keys:</b> <span class="ui on">Auto-Key: On</span>, <span class="ui">Key</span>, <span class="ui">Undo</span>, <span class="ui">Redo</span>, <span class="ui">Play</span></li>
+      <li><b>Touch only:</b> <span class="ui">Drag: Orbit</span>, <span class="ui">Multi-Select</span></li>
+      <li><b>Camera:</b> <span class="ui">Cam View</span>, <span class="ui">Key Cam</span></li>
+      <li><b>Windows:</b> Timeline, Properties, Camera, Sequence, then Explorer, Object, <span class="ui">Reset Objs</span>, Easing, <span class="ui g">Export Film</span>, Cam FX, <span class="ui">Import Film</span>, Physics, Preview, <span class="ui">Edit Cam</span></li>
+      <li><b>Finish:</b> <span class="ui">Import</span>, <span class="ui g">EXPORT</span>, <span class="ui r">X</span></li>
+    </ul>
+    <p>Buttons that are switches turn blue when they're on. See the full list in the <a href="#bar-reference">bottom bar reference</a>.</p>
+
+    <h3 id="windows" data-kw="timeline properties camera sequence explorer object easing camera fx physics preview window list">The windows</h3>
+    <div class="tw"><table>
+      <thead><tr><th>Window</th><th>What it's for</th><th>Open at start?</th></tr></thead>
+      <tbody>
+        <tr><td><a href="#timeline">Timeline</a></td><td class="wrap">Transport, ruler, tracks and diamonds. The heart of the tool.</td><td>Yes</td></tr>
+        <tr><td><a href="#posing">Properties</a></td><td class="wrap">What's selected, pose numbers, key buttons, quick easing.</td><td>On desktop</td></tr>
+        <tr><td><a href="#camera">Camera</a></td><td class="wrap">FOV, Look Through Track, view presets, fly speed, gizmo snap.</td><td>No</td></tr>
+        <tr><td><a href="#sequence-window">Sequence</a></td><td class="wrap">Sequence name, length, FPS, playback speed, priority, event markers.</td><td>No</td></tr>
+        <tr><td><a href="#objects">Explorer</a> and Object</td><td class="wrap">Pick any instance in the game and animate its properties.</td><td>No</td></tr>
+        <tr><td><a href="#easing">Easing</a></td><td class="wrap">Curve graph, styles, directions, Bezier handles and presets.</td><td>No</td></tr>
+        <tr><td><a href="#camfx">Camera FX</a></td><td class="wrap">Shake, roll and FOV punch channels with one-click presets.</td><td>No</td></tr>
+        <tr><td><a href="#physics">Physics</a></td><td class="wrap">Bake ragdoll or object physics into keyframes.</td><td>No</td></tr>
+        <tr><td><a href="#preview">Preview</a></td><td class="wrap">A letterboxed view through the film camera.</td><td>No</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3 id="window-handling" data-kw="move drag resize collapse close grip front">Moving and resizing windows</h3>
+    <ul>
+      <li><b>Move:</b> drag a window by its title bar.</li>
+      <li><b>Resize:</b> drag the little diagonal grip in the bottom-right corner.</li>
+      <li><b>Collapse:</b> the <b>-</b> in the title bar rolls it up to just the bar. Press <b>+</b> to bring it back.</li>
+      <li><b>Close:</b> the <b>x</b>. Reopen from the bottom bar.</li>
+      <li>Clicking a window brings it to the front, and windows can't be dragged off-screen.</li>
+    </ul>
+    <div class="callout tip"><span class="ct">Tip</span>Even this site works the same way: the <b>-</b> in each section's title bar collapses it.</div>
+  </div>
+</section>
+
+<section class="win" id="rigs" data-group="Animating" data-kw="model character bones joints motor6d weld parts folder load remove">
+  <header class="win-t"><h2>Rigs and bones</h2><button class="wb" data-act="collapse" aria-label="Collapse section">-</button></header>
+  <div class="win-b">
+    <p>A <b>rig</b> is whatever you load. A <b>bone</b> is one animatable part of it, and every bone gets its own track in the timeline.</p>
+
+    <h3 id="loading-rigs" data-kw="load rig click pick parts folder partsfolder">Loading a rig</h3>
+    <ul>
+      <li><span class="ui">Load Rig</span> then click anything in the world. The tool walks up from the part you clicked to find the best model: the nearest one containing a Humanoid or a Motor6D, otherwise the nearest model, otherwise the part itself.</li>
+      <li><span class="ui">Parts Folder</span> is a <b>legacy</b> button from the first version of Film Maker. It loads <code>workspace.PartsFolder</code> as one rig, and it's a clumsy way to handle rigs: everything is lumped together with no real structure. It's still there so old projects keep working, but for new work load a proper model with <span class="ui">Load Rig</span> (put loose parts in a Model if you need to).</li>
+      <li>Loading the same thing twice just selects the one you already have. You can load as many rigs as you want.</li>
+    </ul>
+
+    <h3 id="what-is-a-bone" data-kw="motor6d joint free root track weld follower anchored">What becomes a bone</h3>
+    <ul>
+      <li>Every <b>Motor6D</b> whose two parts are both inside the rig becomes a <b>joint</b> bone. Children are indented under their parents in the timeline. The selection label says <i>(joint, N keys)</i>.</li>
+      <li>A part that no Motor6D hangs from (like a root part or a loose prop) becomes a <b>free / root</b> bone. It moves the part itself, relative to where it started when you loaded it.</li>
+      <li>Parts joined to a bone with a Weld or WeldConstraint come along for the ride as <b>followers</b>. They don't get tracks of their own.</li>
+      <li>Bone track names are the part names.</li>
+    </ul>
+    <div class="callout warn"><span class="ct">Heads up</span>Loading a rig <b>anchors every part</b> in it so it can be posed. The original anchored state and position are restored when you remove the rig.</div>
+
+    <h3 id="removing-rigs" data-kw="remove delete unload restore">Removing a rig</h3>
+    <p>Each rig has a blue header row in the timeline reading <b>[Rig] Name</b> with a red <span class="ui r">Remove</span> button. Removing restores every part's original Anchored value and position, resets all joint transforms, and clears its keys and the undo history. Click the header to select the rig (this is what <span class="ui">Key Rig</span>, <span class="ui">Reset Rig</span> and friends act on).</p>
+
+    <h3 id="rig-pose-copy" data-kw="copy rig pose paste mirror duplicate">Copying a pose between rigs</h3>
+    <p><span class="ui">Copy Rig Pose</span> remembers every bone's pose by <i>name</i>. <span class="ui">Paste Rig Pose</span> applies it to the selected rig wherever the names match, and keys it at the playhead if Auto-Key is on. Handy for two copies of the same character.</p>
+  </div>
+</section>
+
+<section class="win" id="posing" data-group="Animating" data-kw="pose gizmo move rotate transform fk forward kinematics properties pose fields snap world local">
+  <header class="win-t"><h2>Posing</h2><button class="wb" data-act="collapse" aria-label="Collapse section">-</button></header>
+  <div class="win-b">
+    <h3 id="selecting" data-kw="select click highlight outline">Selecting a bone</h3>
+    <p>Click a part of the rig in the world, or click the bone's name in the timeline. The selected bone gets a blue outline and the Properties window shows its name and key count.</p>
+
+    <h3 id="gizmo" data-kw="move rotate handles arrows arcs space world local snap pivot">The gizmo</h3>
+    <ul>
+      <li><span class="ui">Move (G)</span> shows green arrows. <span class="ui">Rotate (R)</span> shows orange arcs. For joint bones, rotation pivots around the joint, which is usually what you want.</li>
+      <li><span class="ui">Space: World</span> / <span class="ui">Space: Local</span> chooses whether the handles line up with the world or with the bone.</li>
+      <li><span class="ui on">Snap: On</span> rounds drags. The steps live in the Camera window under <b>Gizmo Snap</b>: <b>Move</b> (default 0.1 studs) and <b>Rot</b> (default 5 degrees). Set either to 0 to turn that one off.</li>
+      <li>The gizmo hides during playback and while nothing is selected.</li>
+    </ul>
+
+    <h3 id="pose-fields" data-kw="numbers type position rotation values euler properties window">Typing exact values</h3>
+    <p>In the Properties window, the <b>POSE</b> section has <b>Pos</b> and <b>Rot</b> boxes (three each, rotation in degrees). Type, then click away or press Enter to commit. These are the bone's <i>pose offset</i> from its rest position, not world coordinates. If the camera track is selected, the boxes show the camera instead.</p>
+
+    <h3 id="reset" data-kw="reset pose reset rig zero neutral rest">Resetting</h3>
+    <ul>
+      <li><span class="ui">Reset Pose</span> sets the selected bone back to rest.</li>
+      <li><span class="ui">Reset Rig</span> does it for every bone in the rig.</li>
+      <li>Both put a key at the playhead if Auto-Key is on.</li>
+    </ul>
+
+    <div class="callout warn"><span class="ct">Heads up</span>A bone that has keys gets re-read from those keys every time the time changes. If you pose it with Auto-Key <b>off</b> and then scrub, your pose snaps back. Press <span class="ui">Key</span> (or <kbd>I</kbd>) to keep it.</div>
+
+    <h3 id="ik" data-kw="inverse kinematics chain hand foot reach pole bend flip grab pin end top fk mode tab">IK: moving the hand, not the shoulder</h3>
+    <p>Inverse kinematics lets you drag the end of a limb and have the rest follow. Turn it on with <span class="ui on">Mode: IK</span> or press <kbd>Tab</kbd>.</p>
+    <ol>
+      <li>Select the <b>end</b> bone, such as the hand or foot. It needs to be a joint bone (one made from a Motor6D).</li>
+      <li>Set how many bones should bend with <span class="ui">IK -</span> / <span class="ui">IK +</span>. <b>Chain: 2</b> is the selected bone plus its parent, perfect for forearm and upper arm. The range is 1 to 8.</li>
+      <li>Use the <span class="ui">Move (G)</span> tool and drag an arrow. The chain solves as you drag.</li>
+    </ol>
+    <p>While IK is on you'll see a small orange ball on the end and a blue ball at the top of the chain, plus orange outlines on the chain's bones.</p>
+    <ul>
+      <li><b>Grab: End</b> (orange ball): the top of the chain stays put and the end follows your drag.</li>
+      <li><b>Grab: Top (pin end)</b> (blue ball): the end stays pinned where it is and the body follows your drag. Great for a planted foot.</li>
+      <li>Click either ball in the world to switch between them, or use the <span class="ui">Grab</span> button.</li>
+      <li><span class="ui">Flip Bend</span> makes the <i>next</i> drag bend the other way (knees and elbows). It reads the current bend direction, so it usually just works.</li>
+    </ul>
+    <p>When you let go, every bone in the chain is keyed together (plus the top bone if you used the pin).</p>
+    <div class="callout"><span class="ct">Under the hood</span>Two-bone chains use a direct solution with a bend direction. Longer chains use an iterative solver (20 passes). IK only applies to the Move tool.</div>
+  </div>
+</section>
+
+<section class="win" id="keys" data-group="Animating" data-kw="keyframe key diamond auto-key autokey copy paste delete undo redo hold">
+  <header class="win-t"><h2>Keyframes</h2><button class="wb" data-act="collapse" aria-label="Collapse section">-</button></header>
+  <div class="win-b">
+    <p>A <b>key</b> is a value saved at a moment in time. Between two keys the tool blends from one to the other using the <a href="#easing">easing</a> you chose. Keys snap to whole frames of your FPS.</p>
+
+    <h3 id="making-keys" data-kw="create add set key auto-key I K insert">Making keys</h3>
+    <div class="tw"><table>
+      <thead><tr><th>How</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td><span class="ui on">Auto-Key: On</span></td><td class="wrap">Keys the selected bone (or IK chain, or object) whenever you finish a gizmo drag, commit a pose number, reset, or paste a rig pose.</td></tr>
+        <tr><td><kbd>I</kbd> or <kbd>K</kbd>, <span class="ui">Key</span></td><td class="wrap">Keys whatever track is selected, at the playhead. On a bone: its pose. On the camera: the current view. On an FX channel: the value in the Camera FX box. On a property: its current value. On Markers: a new marker.</td></tr>
+        <tr><td><span class="ui">Key Sel (I)</span></td><td class="wrap">Same as above, in the Properties window.</td></tr>
+        <tr><td><span class="ui">Key Rig</span></td><td class="wrap">Keys every bone of the selected rig at the playhead. Use it for a clean starting pose.</td></tr>
+      </tbody>
+    </table></div>
+    <p>Keys that land past the end of the timeline stretch the length to include them.</p>
+
+    <h3 id="hold" data-kw="before first key after last key holds between values">What happens outside your keys</h3>
+    <ul>
+      <li>Before the first key and after the last key, a bone holds its first or last pose.</li>
+      <li>A property track shows the original value until its first key.</li>
+      <li>A camera FX channel uses its default (no shake, no roll, FOV add 0, shake rate 14 Hz) until its first key.</li>
+    </ul>
+
+    <h3 id="deleting-keys" data-kw="delete remove x del">Deleting</h3>
+    <p>Press <kbd>X</kbd> or <kbd>Delete</kbd>. If diamonds are selected, those go. If nothing is selected, the key on the selected track exactly under the playhead goes.</p>
+
+    <h3 id="copy-paste" data-kw="copy paste duplicate ctrl c ctrl v clipboard">Copy and paste</h3>
+    <p>Select diamonds, press <kbd>Ctrl</kbd>+<kbd>C</kbd> (or <span class="ui">Copy Keys</span>), move the playhead, press <kbd>Ctrl</kbd>+<kbd>V</kbd> (or <span class="ui">Paste Keys</span>). The pasted keys keep their spacing, start at the playhead, land on the same tracks, and replace any key already there. The pasted keys end up selected.</p>
+
+    <h3 id="undo" data-kw="undo redo history ctrl z ctrl y mistakes">Undo and redo</h3>
+    <p><kbd>Ctrl</kbd>+<kbd>Z</kbd> undoes, <kbd>Ctrl</kbd>+<kbd>Y</kbd> or <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Z</kbd> redoes. There are <span class="ui">Undo</span> / <span class="ui">Redo</span> buttons too. It remembers the last 60 steps and covers bones, camera, markers, FX and property tracks. Loading or removing a rig clears the history, so finish thinking before you remove one.</p>
+
+    <h3 id="key-colors" data-kw="colors diamonds legend yellow blue purple green orange">Diamond colors</h3>
+    <div class="legend">
+      <span><i style="background:var(--key)"></i>Bone / summary</span>
+      <span><i style="background:var(--key-sel)"></i>Selected</span>
+      <span><i style="background:var(--key-cam)"></i>Camera</span>
+      <span><i style="background:var(--key-evt)"></i>Marker</span>
+      <span><i style="background:var(--key-obj)"></i>Object property</span>
+      <span><i style="background:var(--key-fx)"></i>Camera FX</span>
+    </div>
+  </div>
+</section>
+
+<section class="win" id="timeline" data-group="Animating" data-kw="transport ruler scrub zoom tracks playhead play loop fps length duration trim view bar summary">
+  <header class="win-t"><h2>The timeline</h2><button class="wb" data-act="collapse" aria-label="Collapse section">-</button></header>
+  <div class="win-b">
+    <h3 id="tl-layout" data-kw="layout parts anatomy rows">What you're looking at</h3>
+    <ul>
+      <li><b>Transport row</b> across the top: playback, loop, time, length and FPS, plus quick key and zoom buttons.</li>
+      <li><b>Ruler</b> with the yellow playhead. A red grip at the end marks the length, and everything past it is shaded.</li>
+      <li><b>View bar</b> (labelled "view") just under the ruler. It's a minimap of the whole timeline.</li>
+      <li><b>Tracks</b>, from top to bottom: <b>Summary</b>, <b>Camera</b>, <b>Markers</b>, any <b>FX</b> tracks, then one <b>[Rig]</b> group per rig (bones indented under parents) and one <b>[Obj]</b> group per animated object.</li>
+    </ul>
+    <p>The time label reads like <code>1.25s  F38 / 300</code>: seconds, current frame, total frames. Past a minute it switches to minutes and seconds.</p>
+
+    <h3 id="transport" data-kw="play pause step frame loop buttons speed">Transport buttons</h3>
+    <div class="tw"><table>
+      <thead><tr><th>Button</th><th>Does</th></tr></thead>
+      <tbody>
+        <tr><td><span class="ui">|&lt;</span> <span class="ui">&gt;|</span></td><td class="wrap">Jump to the start or the end. (<kbd>Home</kbd> / <kbd>End</kbd>)</td></tr>
+        <tr><td><span class="ui">&lt;</span> <span class="ui">&gt;</span></td><td class="wrap">Step one frame back or forward. (<kbd>&larr;</kbd> / <kbd>&rarr;</kbd>)</td></tr>
+        <tr><td><span class="ui">Play</span> / <span class="ui on">Pause</span></td><td class="wrap">Play or pause. (<kbd>Space</kbd>) If you've keyed the camera, playing automatically turns on Cam View.</td></tr>
+        <tr><td><span class="ui on">Loop</span></td><td class="wrap">Wrap around at the end. Also decides whether exported sequences loop.</td></tr>
+        <tr><td><span class="ui on">Pose Drag</span></td><td class="wrap">When on, dragging a bone's diamond moves that moment for the <i>whole rig</i>. Turn it off to move a single bone's key.</td></tr>
+        <tr><td><span class="ui on">Follow</span></td><td class="wrap">During playback the visible time range scrolls along with the playhead.</td></tr>
+        <tr><td>Len, FPS</td><td class="wrap">Type the length in seconds and the frames per second.</td></tr>
+        <tr><td><span class="ui">Trim End</span></td><td class="wrap">Sets the length to the time of your very last key.</td></tr>
+        <tr><td><span class="ui">Key (I)</span> <span class="ui">Del</span></td><td class="wrap">Key or delete on the selected track.</td></tr>
+        <tr><td><span class="ui">Zoom +</span> <span class="ui">Zoom -</span> <span class="ui">Fit</span></td><td class="wrap">Zoom around the playhead, or fit the whole length.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3 id="navigating" data-kw="zoom pan scroll scrub navigate wheel view bar minimap">Getting around</h3>
+    <ul>
+      <li><b>Scrub:</b> click or drag on the ruler, or click empty space on a track row.</li>
+      <li><b>Zoom:</b> scroll the wheel over the ruler, or <kbd>Ctrl</kbd>+wheel anywhere in the timeline. On a phone, pinch with two fingers.</li>
+      <li><b>Pan:</b> middle-mouse drag, <kbd>Shift</kbd>+wheel, or scroll the wheel over the view bar.</li>
+      <li><b>View bar:</b> drag the bright block to pan, drag its edges to zoom, click elsewhere to jump there.</li>
+      <li><b>Set the length visually:</b> drag the red grip on the ruler.</li>
+    </ul>
+
+    <h3 id="selecting-keys" data-kw="select diamonds multi shift ctrl box lasso drag move retime">Selecting and moving keys</h3>
+    <ul>
+      <li>Click a diamond to select it. Hold <kbd>Ctrl</kbd> or <kbd>Shift</kbd> (or switch on <span class="ui">Multi-Select</span> on touch) to add or remove.</li>
+      <li><b>Box select:</b> hold <kbd>Ctrl</kbd> or <kbd>Shift</kbd>, click empty space twice quickly, and drag on the second press. Everything inside the box is added.</li>
+      <li><b>Drag</b> selected diamonds sideways to retime them. They snap to frames and never go below 0.</li>
+      <li>A diamond on the <b>Summary</b> track stands for everything keyed at that moment. Select or drag it to move all of them together.</li>
+      <li>Clicking a row's empty space selects that track and scrubs there.</li>
+    </ul>
+    <p>When you click a diamond, the easing controls update to show that key's style, so you can see at a glance what it's using.</p>
+
+    <h3 id="sequence-window" data-kw="sequence name priority speed playback event marker window dur fps">The Sequence window</h3>
+    <p>Settings for the clip itself:</p>
+    <ul>
+      <li><b>Name:</b> what exports will be called.</li>
+      <li><b>Dur / FPS:</b> same as the timeline boxes.</li>
+      <li><b>Spd:</b> editor playback speed, from 0.05 to 8. It doesn't change the exported timing.</li>
+      <li>The <b>priority</b> button (Core, Idle, Movement, Action, Action2, Action3, Action4) sets the exported KeyframeSequence's animation priority. Click to cycle. Default is Action.</li>
+      <li>The <b>Event marker</b> section edits <a href="#markers">markers</a>.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="win" id="easing" data-group="Animating" data-kw="ease easing curve bezier interpolation style direction linear constant instant cubic elastic bounce sine quad quart quint back exponential circular overshoot anticipate">
+  <header class="win-t"><h2>Easing</h2><button class="wb" data-act="collapse" aria-label="Collapse section">-</button></header>
+  <div class="win-b">
+    <p>Easing is the difference between a robot arm and a human one. It describes <i>how</i> a value travels from one key to the next: slowly out, fast in the middle, with a bounce at the end, whatever you like.</p>
+
+    <h3 id="easing-lab" data-kw="try curves interactive graph preview demo">Try the curves</h3>
+    <div class="lab" id="lab" aria-label="Easing curve explorer"></div>
+    <p>The graph is an approximation drawn in your browser. The real thing is computed by Roblox's own tween math inside the tool, so tiny differences are possible. The vertical range goes from -0.5 to 1.5 so you can see overshoot, just like in the Easing window.</p>
+
+    <h3 id="how-easing-works" data-kw="segment into key previous next convention">How a key's easing is read</h3>
+    <p>Easing lives on the key that you're <b>arriving at</b>. A key with <b>Quad / Out</b> shapes the motion from the previous key up to itself. This matches how Roblox poses work. The info line in the Easing window says it too: <i>"Segment into key at 1.5s"</i>.</p>
+
+    <h3 id="applying-easing" data-kw="apply set select keys default new keys cycle">Applying it</h3>
+    <ul>
+      <li><b>Select diamonds, then pick a style or direction.</b> They all update at once.</li>
+      <li><b>Nothing selected?</b> You're setting the default for <i>new</i> keys.</li>
+      <li>The Properties window has quick <span class="ui">Style:</span> / <span class="ui">Dir:</span> buttons that cycle through the list (right-click cycles backward).</li>
+    </ul>
+
+    <h3 id="easing-styles" data-kw="list styles instant constant native baked export">Styles and directions</h3>
+    <div class="tw"><table>
+      <thead><tr><th>Style</th><th>Feels like</th><th>In a KeyframeSequence export</th></tr></thead>
+      <tbody>
+        <tr><td>Linear</td><td class="wrap">Constant speed.</td><td class="wrap">Native</td></tr>
+        <tr><td>Instant (Constant)</td><td class="wrap">Holds the old value, then jumps exactly at this key. Good for toggles and cuts.</td><td class="wrap">Native</td></tr>
+        <tr><td>Cubic</td><td class="wrap">A solid, all-purpose ease.</td><td class="wrap">Native</td></tr>
+        <tr><td>Elastic</td><td class="wrap">Springy wobble.</td><td class="wrap">Native</td></tr>
+        <tr><td>Bounce</td><td class="wrap">Like dropping a ball.</td><td class="wrap">Native</td></tr>
+        <tr><td>Sine, Quad, Quart, Quint</td><td class="wrap">Gentle to increasingly strong ease.</td><td class="wrap">Baked</td></tr>
+        <tr><td>Back</td><td class="wrap">Pulls back, then overshoots.</td><td class="wrap">Baked</td></tr>
+        <tr><td>Exponential, Circular</td><td class="wrap">Very sharp starts or stops.</td><td class="wrap">Baked</td></tr>
+        <tr><td>Bezier</td><td class="wrap">Your own curve, set with four numbers or draggable handles.</td><td class="wrap">Baked</td></tr>
+      </tbody>
+    </table></div>
+    <p>Directions: <b>In</b> (slow start), <b>Out</b> (slow finish), <b>InOut</b> (both). Instant and Linear ignore direction.</p>
+    <div class="callout"><span class="ct">What "baked" means</span>Roblox only understands a handful of easing styles natively. For the rest, <span class="ui g">EXPORT</span> inserts an extra linear key for every frame in that stretch so it <i>looks</i> right. You get the same motion with more keys. <span class="ui g">Export Film</span> keeps the real style names and Bezier numbers, and the player evaluates them exactly.</div>
+
+    <h3 id="bezier" data-kw="bezier handles curve editor presets ease in out overshoot anticipate snap numbers">The Bezier editor</h3>
+    <p>Pick <b>Bezier</b> in the Easing window. Two handles appear on the graph: drag them, or type the four numbers (<code>x1 y1 x2 y2</code>) in the boxes. X stays between 0 and 1, but Y can go from -0.5 to 1.5 for overshoot and anticipation.</p>
+    <div class="tw"><table>
+      <thead><tr><th>Preset</th><th>Numbers</th></tr></thead>
+      <tbody>
+        <tr><td>Ease</td><td><code>0.42, 0, 0.58, 1</code></td></tr>
+        <tr><td>Ease In</td><td><code>0.42, 0, 1, 1</code></td></tr>
+        <tr><td>Ease Out</td><td><code>0, 0, 0.58, 1</code></td></tr>
+        <tr><td>Overshoot</td><td><code>0.34, 1.56, 0.64, 1</code></td></tr>
+        <tr><td>Anticipate</td><td><code>0.36, -0.4, 0.64, 1</code></td></tr>
+        <tr><td>Snap</td><td><code>0.9, 0, 1, 0.1</code></td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</section>
+
+<section class="win" id="markers" data-group="Animating" data-kw="event marker keyframemarker cue sound footstep callback onmarker trigger">
+  <header class="win-t"><h2>Event markers</h2><button class="wb" data-act="collapse" aria-label="Collapse section">-</button></header>
+  <div class="win-b">
+    <p>Markers are little purple flags on the <b>Markers</b> track. They don't move anything. They <i>tell your game something happened</i>: a footstep, a line of dialogue, a door slamming, the camera cut.</p>
+
+    <h3 id="adding-markers" data-kw="add create name value">Adding and editing</h3>
+    <ul>
+      <li>Select the <b>Markers</b> track and press <kbd>I</kbd>, or open the Sequence window and press <span class="ui">Add Marker At Playhead</span>.</li>
+      <li>Click a marker's diamond, then edit its <b>Name</b> and <b>Value</b> in the Sequence window. Both are plain text.</li>
+      <li>Move, copy, paste and delete them like any other key. You can stack several at the same time.</li>
+    </ul>
+
+    <h3 id="marker-use" data-kw="listen getmarkerreachedsignal onmarker use code">Hearing them in your game</h3>
+    <ul>
+      <li>Exported KeyframeSequences carry them as standard <code>KeyframeMarker</code>s, so <code>AnimationTrack:GetMarkerReachedSignal("Footstep")</code> works as usual.</li>
+      <li>With AxoFilmPlayer, pass an <code>onMarker</code> function. It receives the name, the value, the time and the playback handle. See <a href="#player">the player</a>.</li>
+    </ul>
+    <div class="callout tip"><span class="ct">Tip</span>Use the marker <b>Name</b> for the kind of event and the <b>Value</b> for details, like <code>Sound</code> / <code>Door_Slam</code>. Your handler can then switch on one and use the other.</div>
+  </div>
+</section>
+
+<section class="win" id="camera" data-group="Camera" data-kw="film camera free cam fly orbit key camera look through track cam view fov frustum path edit cam">
+  <header class="win-t"><h2>The camera</h2><button class="wb" data-act="collapse" aria-label="Collapse section">-</button></header>
+  <div class="win-b">
+    <p>There are really two cameras. Your <b>editor view</b> is how you look around. The <b>film camera</b> is the one you animate on the Camera track. Keep them straight and everything else makes sense.</p>
+
+    <h3 id="free-cam" data-kw="fly orbit pan zoom move around view wasd">Looking around (editor view)</h3>
+    <ul>
+      <li><b>Orbit:</b> hold the middle mouse button and drag.</li>
+      <li><b>Pan:</b> <kbd>Shift</kbd> + middle mouse drag.</li>
+      <li><b>Zoom / dolly:</b> scroll the wheel, or <kbd>Ctrl</kbd> + middle mouse drag.</li>
+      <li><b>Fly:</b> hold the right mouse button and use <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> to move, <kbd>E</kbd> up, <kbd>Q</kbd> down. Hold <kbd>Shift</kbd> to go three times faster. Scroll while holding the button to change speed.</li>
+      <li><b>Focus:</b> <kbd>F</kbd> centers the selected bone.</li>
+      <li><b>Views:</b> the Camera window has <span class="ui">Front</span>, <span class="ui">Right</span>, <span class="ui">Back</span> and <span class="ui">Top</span>. The numpad does <kbd>1</kbd> front, <kbd>3</kbd> right, <kbd>7</kbd> top, and <kbd>Ctrl</kbd> flips to the opposite side.</li>
+    </ul>
+
+    <h3 id="keying-camera" data-kw="key camera shot create camera track keyframe fov">Keying a shot</h3>
+    <ol class="steps">
+      <li><b>Frame it.</b>Fly to where you want the camera at this moment. Zoom and FOV in the Camera window if needed (1 to 120).</li>
+      <li><b>Key it.</b>Press <span class="ui">Key Cam</span> in the bar (or <span class="ui">Key Camera</span> in the Camera window, or select the Camera track and press <kbd>I</kbd>). A blue diamond appears on the Camera track.</li>
+      <li><b>Move on.</b>Go to another time, fly somewhere else, key again. The camera glides between them.</li>
+    </ol>
+    <p>The Preview window also has <span class="ui">Cam = View</span>, which copies your current editor view onto the film camera at the playhead.</p>
+
+    <h3 id="cam-view" data-kw="look through track cam view play preview see film camera toggle">Looking through the film camera</h3>
+    <p><span class="ui">Cam View</span> (also <span class="ui">Look Through Track</span> in the Camera window) makes the screen show the film camera, with shake and roll applied. Pressing Play with camera keys does this automatically. The moment you orbit, fly or zoom, it switches back to your editor view. You'll need at least one camera key first, or you'll see <i>"Key the camera first"</i>.</p>
+
+    <h3 id="edit-cam" data-kw="edit cam gizmo move rotate film camera handles">Edit Cam: moving the film camera with the gizmo</h3>
+    <p>Turn on <span class="ui on">Edit Cam</span> and the Move and Rotate gizmos grab the film camera instead of a bone. Great for small nudges. Each change keys the camera at the playhead if the camera already has keys or Auto-Key is on.</p>
+
+    <h3 id="cam-guides" data-kw="frustum path line guide orange blue yellow balls">Seeing the camera in the 3D view</h3>
+    <ul>
+      <li>An orange wireframe <b>frustum</b> shows where the film camera is and what it sees. Toggle with <span class="ui">Frustum</span> in the Preview window.</li>
+      <li>A blue <b>path</b> line shows where the camera travels, with a yellow ball at every key. It needs at least two keys. Toggle with <span class="ui">Path</span>.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="win" id="preview" data-group="Camera" data-kw="preview window viewport aspect ratio grid safe frame letterbox 16:9 scope scene objects rebuild">
+  <header class="win-t"><h2>Preview window</h2><button class="wb" data-act="collapse" aria-label="Collapse section">-</button></header>
+  <div class="win-b">
+    <p>A small movie screen that always shows what the <b>film camera</b> sees, whatever your editor view is doing. Open it from the bar with <span class="ui">Preview</span>.</p>
+
+    <h3 id="preview-controls" data-kw="buttons aspect grid safe frustum path drag look move dolly fov cam equals view key scope rebuild">The toolbar</h3>
+    <div class="tw"><table>
+      <thead><tr><th>Button</th><th>Does</th></tr></thead>
+      <tbody>
+        <tr><td><span class="ui">Play</span></td><td class="wrap">Play or pause the timeline.</td></tr>
+        <tr><td><span class="ui">16:9</span></td><td class="wrap">Cycle aspect ratio: 16:9, 4:3, 1:1, 9:16, 21:9.</td></tr>
+        <tr><td><span class="ui on">Grid</span></td><td class="wrap">Rule-of-thirds lines.</td></tr>
+        <tr><td><span class="ui">Safe</span></td><td class="wrap">Safe-area boxes (90% and 80%) and a center cross.</td></tr>
+        <tr><td><span class="ui on">Frustum</span> <span class="ui on">Path</span></td><td class="wrap">Show or hide the camera guides in the 3D world.</td></tr>
+        <tr><td><span class="ui">Drag: Look</span></td><td class="wrap">What dragging inside the preview does: Look, Move, Dolly or FOV.</td></tr>
+        <tr><td><span class="ui">Cam = View</span></td><td class="wrap">Copy your editor view onto the film camera.</td></tr>
+        <tr><td><span class="ui">Key Cam</span></td><td class="wrap">Key the film camera as it is right now.</td></tr>
+        <tr><td><span class="ui">Scope: Scene</span></td><td class="wrap">Preview the whole scene, or only your rigs and tracked objects (faster).</td></tr>
+        <tr><td><span class="ui">Rebuild</span></td><td class="wrap">Rebuild the preview's copy of the scene.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3 id="preview-direct" data-kw="drag directly control camera in preview wheel scrub bar">Steering the camera from inside the preview</h3>
+    <ul>
+      <li>Drag with the left mouse: depends on the <b>Drag</b> mode. <b>Look</b> pans and tilts, <b>Move</b> slides sideways and up, <b>Dolly</b> pushes in and out, <b>FOV</b> widens and narrows.</li>
+      <li>Middle mouse or <kbd>Shift</kbd>+drag always does Move. <kbd>Ctrl</kbd>+drag always does Dolly.</li>
+      <li>Scroll to dolly. <kbd>Ctrl</kbd>+scroll changes the FOV.</li>
+      <li>Every adjustment keys the camera at the playhead (when the camera has keys or Auto-Key is on).</li>
+      <li>The thin bar underneath scrubs the timeline.</li>
+    </ul>
+
+    <div class="callout warn"><span class="ct">Limits</span>The preview shows a copy of the scene, so <b>terrain is not drawn</b>. It stops copying at about 5,000 parts. If it hits that, switch to <b>Scope: Objects</b>. It also adds scene lighting colors that are close to, but not exactly, your game's look.</div>
+  </div>
+</section>
+
+<section class="win" id="camfx" data-group="Camera" data-kw="shake roll tilt dutch fov punch handheld rumble impact earthquake camera effects">
+  <header class="win-t"><h2>Camera FX</h2><button class="wb" data-act="collapse" aria-label="Collapse section">-</button></header>
+  <div class="win-b">
+    <p>Effects sit <b>on top of</b> the camera track, so you animate the shot first and then add feeling. You'll only see them when you're looking through the film camera (<span class="ui">Cam View</span>) or in the Preview window.</p>
+
+    <h3 id="fx-channels" data-kw="channels shake pos rot hz roll fov add">The five channels</h3>
+    <div class="tw"><table>
+      <thead><tr><th>Channel</th><th>Unit</th><th>Typed default</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td>Shake Pos</td><td>studs</td><td>0.4</td><td class="wrap">How far the camera jitters sideways, up and forward.</td></tr>
+        <tr><td>Shake Rot</td><td>degrees</td><td>2</td><td class="wrap">How much it twists while it jitters.</td></tr>
+        <tr><td>Shake Hz</td><td>per second</td><td>14</td><td class="wrap">How fast the shake moves. Low is a slow wobble, high is a buzz.</td></tr>
+        <tr><td>Roll</td><td>degrees</td><td>10</td><td class="wrap">Tilts the horizon (Dutch angle).</td></tr>
+        <tr><td>FOV Add</td><td>degrees</td><td>12</td><td class="wrap">Added on top of the camera's FOV. Positive widens.</td></tr>
+      </tbody>
+    </table></div>
+    <p>Each row in the Camera FX window has a number box, a <b>K</b> button that keys that value at the playhead, and a live readout of the channel's current value. FX tracks appear in the timeline once they have keys (and while the window is open).</p>
+
+    <h3 id="fx-presets" data-kw="presets impact rumble handheld fov punch dutch tilt clear fx one click">One-click presets</h3>
+    <p>Presets are placed at the playhead, then you can drag them around like any keys.</p>
+    <div class="tw"><table>
+      <thead><tr><th>Preset</th><th>What you get</th></tr></thead>
+      <tbody>
+        <tr><td>Impact</td><td class="wrap">A sharp hit of shake at 18 Hz that fades out over about half a second.</td></tr>
+        <tr><td>Rumble</td><td class="wrap">A low, steady rumble (10 Hz) that eases in, holds for about 1.5 seconds, then fades. Great for big footsteps or explosions far away.</td></tr>
+        <tr><td>Handheld</td><td class="wrap">A very gentle, slow wander (2.2 Hz) from the playhead to the end of the clip. Makes locked-off shots feel filmed.</td></tr>
+        <tr><td>FOV Punch</td><td class="wrap">Widens the lens by 14 degrees, then settles back in about a third of a second.</td></tr>
+        <tr><td>Dutch Tilt</td><td class="wrap">Puts a roll key at the playhead using the Roll box value.</td></tr>
+        <tr><td>Clear FX</td><td class="wrap">Deletes every FX key. (Undo brings them back.)</td></tr>
+      </tbody>
+    </table></div>
+    <div class="callout warn"><span class="ct">Heads up</span>Camera FX are saved by <span class="ui g">Export Film</span> and played by AxoFilmPlayer. A regular KeyframeSequence export (<span class="ui g">EXPORT</span>) only has the camera's position and FOV, not the FX.</div>
+  </div>
+</section>
+
+<section class="win" id="objects" data-group="Beyond rigs" data-kw="explorer object property track tracking animate lights color transparency lighting gui sound attachment instance">
+  <header class="win-t"><h2>Animating objects and properties</h2><button class="wb" data-act="collapse" aria-label="Collapse section">-</button></header>
+  <div class="win-b">
+    <p>Characters are only half of a scene. Doors open, lights flicker, the sun sets, a part fades out. For that you track an <b>object</b> and put keys on its <b>properties</b>.</p>
+
+    <h3 id="explorer" data-kw="explorer tree workspace lighting search select track plus minus">The Explorer window</h3>
+    <ul>
+      <li>It lists the children of <b>Workspace</b>. Press the root button to switch to <b>Lighting</b> (that's where Atmosphere, Bloom, Blur, ColorCorrection and so on live).</li>
+      <li>Expand with <b>+</b>/<b>-</b>. Click a name to select it. <span class="ui">Refresh</span> and <span class="ui">Collapse</span> do what they say.</li>
+      <li>Type in the search box and press Enter to search by name (it shows the first 250 matches; the tree is capped at 250 rows too).</li>
+      <li>The button on the right of each row tracks (<b>+</b>) or untracks (<b>-</b>) the object. Tracked ones show a <b>*</b> before the name.</li>
+      <li>Things belonging to a loaded rig are dimmed, since the rig tools handle them.</li>
+    </ul>
+    <div class="callout tip"><span class="ct">Tip</span>With Explorer or Object open, clicking something in the 3D world selects it in the Explorer. With neither open, clicking an object that isn't part of a rig just deselects.</div>
+
+    <h3 id="object-window" data-kw="object window properties edit value key k x add property by name">The Object window</h3>
+    <p>Shows the selected instance's common properties for its class. Each row has the name, an editor, a <b>K</b> button to key the current value at the playhead, and (once tracked) an <b>x</b> button to remove that property's track.</p>
+    <ul>
+      <li><span class="ui">Track</span>, <span class="ui">Key All</span>, <span class="ui">Reset</span> and <span class="ui">Untrack</span> sit across the top.</li>
+      <li><b>Booleans</b> toggle on click. <b>Enums</b> have a <b>&gt;</b> button to cycle. <b>Instance</b> properties let you click the value and then click a target in Explorer or the world (the <b>nil</b> button clears it).</li>
+      <li>Not in the list? Type any property name in <i>add any property by name</i> and press <span class="ui">Add</span>.</li>
+    </ul>
+
+    <h3 id="value-formats" data-kw="color3 vector3 cframe udim2 type format hex rgb input values">Typing values</h3>
+    <div class="tw"><table>
+      <thead><tr><th>Type</th><th>Write it like</th></tr></thead>
+      <tbody>
+        <tr><td>number, string, boolean</td><td class="wrap"><code>0.5</code>, text, <code>true</code> / <code>false</code> (or on/off, yes/no, 1/0)</td></tr>
+        <tr><td>Color3</td><td class="wrap"><code>255, 128, 0</code> or <code>#FF8000</code> or <code>1, 0.5, 0</code> (0 to 1 when decimals are used)</td></tr>
+        <tr><td>Vector3, Vector2</td><td class="wrap"><code>1, 2, 3</code> and <code>1, 2</code></td></tr>
+        <tr><td>CFrame</td><td class="wrap"><code>x, y, z, rx, ry, rz</code> (rotation in degrees). With only three numbers, rotation is kept.</td></tr>
+        <tr><td>UDim2, UDim</td><td class="wrap"><code>xScale, xOffset, yScale, yOffset</code> and <code>scale, offset</code></td></tr>
+        <tr><td>NumberRange</td><td class="wrap"><code>min, max</code></td></tr>
+        <tr><td>BrickColor, EnumItem</td><td class="wrap">The name (for example <code>Bright red</code> or <code>Neon</code>)</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3 id="tracking-rules" data-kw="how tracking works auto-key pivot worldcframe move rotate gizmo interpolate step hold booleans reset objs original values">How property tracks behave</h3>
+    <ul>
+      <li>With Auto-Key on, dragging the gizmo on a tracked or untracked part/model creates a <b>Pivot</b> track and keys it. (Attachments use <b>WorldCFrame</b>.) Editing a value in the Object window does the same.</li>
+      <li>Numbers, Vector3, Vector2, Color3, CFrame, UDim2, UDim and NumberRange <b>blend</b> between keys using your easing.</li>
+      <li>Everything else (booleans, strings, enums, BrickColor, sequences, instances) <b>holds</b> its value until the next key, then jumps.</li>
+      <li>Before its first key a property shows its original value. <span class="ui">Reset Objs</span> puts <i>all</i> tracked objects back to their original values at any time. Closing the tool does it too.</li>
+      <li>Property tracks show up under an <b>[Obj]</b> header with a red <span class="ui r">Remove</span> button, which untracks the object and restores it.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="win" id="physics" data-group="Beyond rigs" data-kw="physics bake ragdoll rigid body gravity collide fall tumble knock launch simulation">
+  <header class="win-t"><h2>Physics baking</h2><button class="wb" data-act="collapse" aria-label="Collapse section">-</button></header>
+  <div class="win-b">
+    <p>Some motion is a pain to hand-key: a body flopping down stairs, a crate tumbling off a ledge. The Physics window lets Roblox's real physics do it, then <b>records</b> the result as keyframes you can edit.</p>
+
+    <h3 id="physics-modes" data-kw="ragdoll rigid objects mode target">Pick a target</h3>
+    <div class="tw"><table>
+      <thead><tr><th>Mode</th><th>What happens</th><th>Keys written</th></tr></thead>
+      <tbody>
+        <tr><td>Ragdoll</td><td class="wrap">Every joint turns into a ball-socket with limits, so the body goes limp. Use <b>Next Rig</b> to choose which rig.</td><td class="wrap">Every bone of the rig</td></tr>
+        <tr><td>Rigid Body</td><td class="wrap">The rig tumbles as one solid piece.</td><td class="wrap">The free / root bones only</td></tr>
+        <tr><td>Objects</td><td class="wrap">Parts and models you've added: select one in Explorer, then press <span class="ui">Add Selected</span>. <span class="ui">Clear List</span> empties it.</td><td class="wrap">A Pivot track per object</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3 id="physics-steps" data-kw="how to bake run simulate steps">Baking</h3>
+    <ol class="steps">
+      <li><b>Set the moment.</b>Move the playhead to where the physics should <i>start</i>. The rig is posed as it is at that time.</li>
+      <li><b>Choose a launch.</b>Try a preset (<span class="ui">Drop</span>, <span class="ui">Knock Back</span>, <span class="ui">Hurl</span>, <span class="ui">Launch Up</span>, <span class="ui">Tumble</span>) or type your own launch and spin. Directions are relative to which way the target faces.</li>
+      <li><b>Press <span class="ui g">Bake Physics</span>.</b>A progress bar fills while a hidden copy of your target is simulated in the real world. Your original is hidden meanwhile.</li>
+      <li><b>Wait or stop.</b>It ends by itself when the duration is reached or when everything's been still for a moment, or press <span class="ui">Stop &amp; Keep</span>. <span class="ui">Cancel</span> throws it away.</li>
+      <li><b>Play it.</b>The status says how many frames were baked. Press Play to watch.</li>
+    </ol>
+
+    <h3 id="physics-settings" data-kw="settings duration gravity joint cone twist key every n frames launch spin stop when still colliders follow timeline presets values">Settings</h3>
+    <div class="tw"><table>
+      <thead><tr><th>Setting</th><th>Default</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td>Duration (s)</td><td>4</td><td class="wrap">Longest the bake can run.</td></tr>
+        <tr><td>Gravity</td><td class="wrap">Your game's</td><td class="wrap">Gravity during the bake. Restored afterwards.</td></tr>
+        <tr><td>Joint cone (deg)</td><td>70</td><td class="wrap">How far ragdoll joints can bend.</td></tr>
+        <tr><td>Joint twist (deg)</td><td>40</td><td class="wrap">How far they can twist, either way.</td></tr>
+        <tr><td>Key every N frames</td><td>1</td><td class="wrap">1 records every frame at your FPS. 2 records every other, and so on, for lighter keys.</td></tr>
+        <tr><td>Launch x y z</td><td>0, 0, 0</td><td class="wrap">Starting velocity in studs per second.</td></tr>
+        <tr><td>Spin x y z</td><td>0, 0, 0</td><td class="wrap">Starting spin in degrees per second.</td></tr>
+        <tr><td>Stop when still</td><td>On</td><td class="wrap">Ends early once everything has settled (after at least 0.8 seconds).</td></tr>
+        <tr><td>Colliders follow timeline</td><td>On</td><td class="wrap">While baking, the timeline plays and your other rigs and tracked objects act as moving solid obstacles.</td></tr>
+      </tbody>
+    </table></div>
+    <div class="tw"><table>
+      <thead><tr><th>Preset</th><th>Launch</th><th>Spin</th></tr></thead>
+      <tbody>
+        <tr><td>Drop</td><td>0, 0, 0</td><td>0, 0, 0</td></tr>
+        <tr><td>Knock Back</td><td>0, 18, 45</td><td>60, 0, 0</td></tr>
+        <tr><td>Hurl</td><td>0, 14, -50</td><td>-90, 0, 0</td></tr>
+        <tr><td>Launch Up</td><td>0, 70, 0</td><td>120, 40, 90</td></tr>
+        <tr><td>Tumble</td><td>0, 12, -20</td><td>220, 90, 160</td></tr>
+      </tbody>
+    </table></div>
+
+    <div class="callout warn"><span class="ct">Heads up</span>Baking <b>replaces existing keys</b> on the affected tracks within the time range it records. Undo brings them back. The baked clip is a recording, so if you move the ground or change the launch, bake again.</div>
+    <div class="callout"><span class="ct">Under the hood</span>The simulated copy has its scripts, Humanoid, Animator and body movers removed, and the root part doesn't collide so it doesn't fight with the legs.</div>
+  </div>
+</section>
+
+<section class="win" id="export" data-group="Getting it into your game" data-kw="export import keyframesequence save animation roblox priority loop">
+  <header class="win-t"><h2>Exporting to KeyframeSequence</h2><button class="wb" data-act="collapse" aria-label="Collapse section">-</button></header>
+  <div class="win-b">
+    <p>The green <span class="ui g">EXPORT</span> button makes standard Roblox <code>KeyframeSequence</code> objects, the same kind the Animation Editor makes. Use this when you want a normal animation you can load and play on a character with the usual Animator tools.</p>
+
+    <h3 id="what-export-makes" data-kw="names output camera events rig sequences workspace currentcamera">What you get</h3>
+    <p>Everything lands inside <code>workspace.CurrentCamera</code>, and old ones with the same name are replaced.</p>
+    <div class="tw"><table>
+      <thead><tr><th>Name</th><th>Contains</th></tr></thead>
+      <tbody>
+        <tr><td><code>Name</code> or <code>Name_RigName</code></td><td class="wrap">One sequence per rig that has keys. With a single rig it's just the sequence name; with several, each gets its rig's name added.</td></tr>
+        <tr><td><code>Name_Camera</code></td><td class="wrap">The camera track: a pose called <code>Camera</code>, with the FOV stored as the keyframe's <code>FieldOfView</code> attribute.</td></tr>
+        <tr><td><code>Name_Events</code></td><td class="wrap">Property-track keys encoded as <code>FM_Set</code> markers, if you've animated any objects.</td></tr>
+      </tbody>
+    </table></div>
+    <ul>
+      <li>Event markers from your Markers track are written into <b>every</b> sequence.</li>
+      <li>The sequence's loop setting follows <span class="ui on">Loop</span>, and its priority follows the Sequence window button.</li>
+      <li>Non-native easing is baked (see <a href="#easing-styles">Easing</a>).</li>
+      <li>Status: <i>"Exported to workspace.CurrentCamera: ..."</i> or <i>"Nothing to export: no keyframes yet"</i>.</li>
+    </ul>
+    <div class="callout"><span class="ct">Why CurrentCamera?</span>It's on purpose. Studio Lite clears out most of what you create while testing, but anything in <code>CurrentCamera</code> becomes a <b>persistent instance</b> that doesn't get cleared. That makes the camera the safe place for your exports: they're still there after the test ends, and they stay out of your place's own hierarchy.</div>
+    <div class="callout tip"><span class="ct">Tip</span>For object animation and camera FX, prefer <a href="#film">films</a>. They hold everything in one piece, and the player does the rest.</div>
+
+    <h3 id="import-seq" data-kw="import keyframesequence bring animation back bone names match">Importing a sequence</h3>
+    <p><span class="ui">Import</span> reads a KeyframeSequence into your timeline. First, <b>load the rig it's for</b>, because poses are matched to bone names (case doesn't matter). It looks in this order and uses the first thing it finds:</p>
+    <ol>
+      <li>The KeyframeSequence you've selected in Explorer.</li>
+      <li>Sequences in <code>CurrentCamera</code> named after your Sequence name (or <code>Name_...</code>).</li>
+      <li>Any other KeyframeSequence in <code>CurrentCamera</code>.</li>
+      <li>The first one found in Workspace or ReplicatedStorage.</li>
+    </ol>
+    <p>It <b>replaces</b> all existing keys, camera keys and markers (undoable), adopts the sequence's loop setting, and extends the length if needed. Poses named <code>Camera</code> become camera keys with their <code>FieldOfView</code>. Unknown easing styles become Cubic. Pose names that don't match any bone are listed in the Output as <i>unmatched pose names</i>.</p>
+  </div>
+</section>
+
+<section class="win" id="film" data-group="Getting it into your game" data-kw="export film import film json stringvalue axofilm save project clipboard writefile">
+  <header class="win-t"><h2>Films: Export Film and Import Film</h2><button class="wb" data-act="collapse" aria-label="Collapse section">-</button></header>
+  <div class="win-b">
+    <p>A <b>film</b> is your entire scene in one piece of text: rig animation, the camera track, camera FX, property tracks, markers, length, FPS and loop. It's the format AxoFilmPlayer plays, and it's also the closest thing the tool has to a save file.</p>
+
+    <h3 id="export-film" data-kw="export film stringvalue name clipboard file">Exporting a film</h3>
+    <p>Press <span class="ui g">Export Film</span>. It creates a <code>StringValue</code> named <code>AxoFilm_YourSequenceName</code> in <code>workspace.CurrentCamera</code>, holding the film as JSON. If your environment offers <code>setclipboard</code> it also copies the text to your clipboard, and if it offers <code>writefile</code> it saves <code>AxoFilm_Name.json</code>. The status line tells you which of those happened and how big the film is.</p>
+    <div class="callout"><span class="ct">It sticks around</span>The StringValue is placed in <code>CurrentCamera</code> so it becomes a persistent instance and Studio Lite won't clear it. To play the film in a game, copy its <b>Value</b> text into a StringValue in ReplicatedStorage named <code>AxoFilm_YourName</code> (or into a StringValue named <code>YourName</code> inside a folder called <code>AxoFilms</code> in ReplicatedStorage).</div>
+
+    <h3 id="what-films-store" data-kw="contents includes rigs objects marks fx camera supported types sequences simplified">What a film remembers</h3>
+    <ul>
+      <li><b>Rigs:</b> only bones that have keys, by path from the rig, with an indication of whether they're joints.</li>
+      <li><b>Camera and FX:</b> every key, with easing style, direction and Bezier numbers intact.</li>
+      <li><b>Objects:</b> each tracked object's path and property keys. Number, boolean, string, Color3, Vector3, Vector2, CFrame, UDim2, UDim, NumberRange, BrickColor, enums and instance references are supported. A NumberSequence or ColorSequence is simplified to its first value.</li>
+      <li><b>Markers:</b> time, name and value.</li>
+    </ul>
+
+    <h3 id="import-film" data-kw="import film load back restore project missing rigs skipped">Importing a film</h3>
+    <p><span class="ui">Import Film</span> reads a film back in, replacing the camera, FX, marker, bone and object keys. It finds the film in this order: a StringValue you've selected in Explorer, then <code>AxoFilm_YourName</code> in the camera, then any <code>AxoFilm_*</code> StringValue in the camera or ReplicatedStorage.</p>
+    <ul>
+      <li>Rigs in the film that aren't loaded yet are loaded for you by path, if they exist in the game.</li>
+      <li>Objects are tracked by path, and their tracks restored.</li>
+      <li>Sequence name, FPS, length and loop are adopted.</li>
+      <li>The status line reports how many rig tracks and properties were imported and how many rig tracks were skipped (because their rig couldn't be found). Load that rig and import again.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="win" id="player" data-group="Getting it into your game" data-kw="axofilmplayer player api play playback cutscene code lua script handle options onmarker onend stop pause seek speed loop camera restore rigs objs">
+  <header class="win-t"><h2>Playing films in your game</h2><button class="wb" data-act="collapse" aria-label="Collapse section">-</button></header>
+  <div class="win-b">
+    <p>AxoFilmPlayer is a small, self-contained script. It plays a film: moves the rig bones, drives the camera, applies FX, changes object properties and fires your markers. It has no UI and doesn't need Film Maker at all.</p>
+    <div class="callout warn"><span class="ct">Films only</span>AxoFilmPlayer plays <b>films</b> and nothing else. If you exported a <b>KeyframeSequence</b> (the plain <span class="ui g">EXPORT</span> button), play it with Roblox's <code>KeyframeSequencePlayer</code> instead.</div>
+
+    <h3 id="player-quick" data-kw="quick start example hello cutscene">Quick start</h3>
+    <p>Run the player in a LocalScript, put your film in ReplicatedStorage, and call <code>Play</code> from another LocalScript.</p>
+<pre data-lang="lua"><code>repeat task.wait() until _G.AxoFilmPlayer and _G.AxoFilmPlayer.Ready
+
+local Player = _G.AxoFilmPlayer
+local handle = Player.Play("Intro")
+Player.Wait(handle)
+print("cutscene done")</code></pre>
+
+    <h3 id="film-lookup" data-kw="find name lookup get replicatedstorage axofilms folder stringvalue">Where films are found</h3>
+    <p>A name like <code>"Intro"</code> is looked up, in order, as <code>ReplicatedStorage.AxoFilm_Intro</code>, then <code>CurrentCamera.AxoFilm_Intro</code>, then inside <code>ReplicatedStorage.AxoFilms</code> as either <code>Intro</code> or <code>AxoFilm_Intro</code>.</p>
+    <p>You can also pass the StringValue itself, a JSON string (anything starting with <code>{</code>), or an already decoded table. Loaded films are cached, and reloaded if the StringValue's text changes.</p>
+
+    <h3 id="player-options" data-kw="options table speed loop starttime camera restorecamera restoreworld rigs objs onmarker onend parameters">Options</h3>
+    <p><code>Player.Play(source, options)</code> takes an optional table:</p>
+    <div class="tw"><table>
+      <thead><tr><th>Option</th><th>Default</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td><code>speed</code></td><td>1</td><td class="wrap">Playback speed multiplier.</td></tr>
+        <tr><td><code>loop</code></td><td class="wrap">From the film</td><td class="wrap">Force looping on or off.</td></tr>
+        <tr><td><code>startTime</code></td><td>0</td><td class="wrap">Start part-way in, in seconds.</td></tr>
+        <tr><td><code>camera</code></td><td>true</td><td class="wrap">Set to <code>false</code> to not touch the camera at all.</td></tr>
+        <tr><td><code>restoreCamera</code></td><td>true</td><td class="wrap">Set to <code>false</code> to leave the camera where the film ended.</td></tr>
+        <tr><td><code>restoreWorld</code></td><td>false</td><td class="wrap">Put bones and properties back to how they were when playback ends.</td></tr>
+        <tr><td><code>rigs</code></td><td>-</td><td class="wrap">A table mapping rig name to a different instance, to reuse an animation on another model.</td></tr>
+        <tr><td><code>objs</code></td><td>-</td><td class="wrap">A table mapping an object's path (joined with <code>/</code>, like <code>"Workspace/Door"</code>) to a different instance.</td></tr>
+        <tr><td><code>onMarker</code></td><td>-</td><td class="wrap">Function called as <code>(name, value, time, handle)</code> when a marker is reached.</td></tr>
+        <tr><td><code>onEnd</code></td><td>-</td><td class="wrap">Function called with the handle when playback ends.</td></tr>
+      </tbody>
+    </table></div>
+<pre data-lang="lua"><code>local handle = Player.Play("Intro", {
+    speed = 1,
+    loop = false,
+    restoreWorld = true,
+    rigs = { Knight = workspace.KnightClone },
+    onMarker = function(name, value, time, h)
+        if name == "Sound" then
+            print("play", value, "at", time)
+        end
+    end,
+    onEnd = function(h)
+        print("film ended")
+    end,
+})</code></pre>
+
+    <h3 id="player-handle" data-kw="handle control stop pause resume setspeed seek reset time playing ended duration">Controlling playback</h3>
+    <p><code>Play</code> returns a handle (or <code>nil</code> with a warning if the film couldn't be loaded). Call its methods with a colon.</p>
+    <div class="tw"><table>
+      <thead><tr><th>Member</th><th>What it is</th></tr></thead>
+      <tbody>
+        <tr><td><code>handle.Time</code></td><td class="wrap">Current time in seconds.</td></tr>
+        <tr><td><code>handle.Playing</code>, <code>handle.Ended</code></td><td class="wrap">State flags.</td></tr>
+        <tr><td><code>handle.Speed</code>, <code>handle.Loop</code></td><td class="wrap">Current settings.</td></tr>
+        <tr><td><code>handle.Duration</code>, <code>handle.Film</code></td><td class="wrap">Length in seconds, and the decoded film table.</td></tr>
+        <tr><td><code>handle:Pause()</code> <code>handle:Resume()</code></td><td class="wrap">Pause and resume.</td></tr>
+        <tr><td><code>handle:SetSpeed(n)</code></td><td class="wrap">Change speed.</td></tr>
+        <tr><td><code>handle:Seek(t)</code></td><td class="wrap">Jump to a time (clamped to the film) and show that frame.</td></tr>
+        <tr><td><code>handle:Stop(restoreWorld)</code></td><td class="wrap">End it now. Pass <code>true</code> to put bones and properties back.</td></tr>
+        <tr><td><code>handle:Reset()</code></td><td class="wrap">Put bones and properties back without stopping.</td></tr>
+      </tbody>
+    </table></div>
+    <p>And on the player itself: <code>Player.Wait(handle)</code> yields until a handle ends, <code>Player.StopAll(restoreWorld)</code> stops everything, <code>Player.Active</code> lists running handles, <code>Player.Get(name)</code> returns the StringValue, and <code>Player.Load(source)</code> returns the decoded film (or <code>nil</code> and a reason).</p>
+
+    <h3 id="player-notes" data-kw="notes tips anchored camera scriptable looping markers fire order">Things worth knowing</h3>
+    <ul>
+      <li>The camera is set to Scriptable while a film with camera or FX data is playing, then restored on end (unless you turned that off).</li>
+      <li>Markers fire once as the time crosses them, including the very end. When a film loops, they fire again each lap.</li>
+      <li>The player moves joints through <code>Motor6D.Transform</code>, and moves free bones by setting the part's CFrame. Keep those root parts anchored so physics doesn't fight the animation.</li>
+      <li>Bones, rigs or objects the film refers to but can't find are simply skipped. The rest still plays.</li>
+    </ul>
+
+    <h3 id="player-recipes" data-kw="recipes examples cutscene lock controls wait sequence chain two films">Recipes</h3>
+    <h4>A cutscene that waits, then gives control back</h4>
+<pre data-lang="lua"><code>local Player = _G.AxoFilmPlayer
+
+local function playCutscene(name)
+    local handle = Player.Play(name, { restoreWorld = true })
+    if handle then
+        Player.Wait(handle)
+    end
+end
+
+playCutscene("Intro")
+playCutscene("Door_Opens")</code></pre>
+    <h4>Skip with a key</h4>
+<pre data-lang="lua"><code>local UIS = game:GetService("UserInputService")
+local handle = _G.AxoFilmPlayer.Play("Intro")
+
+local conn
+conn = UIS.InputBegan:Connect(function(input)
+    if input.KeyCode == Enum.KeyCode.Return and handle then
+        handle:Stop(false)
+        conn:Disconnect()
+    end
+end)</code></pre>
+  </div>
+</section>
+
+<section class="win" id="film-format" data-group="Getting it into your game" data-kw="film format json structure fields schema advanced keys cam rigs objs marks fx">
+  <header class="win-t"><h2>Film format</h2><button class="wb" data-act="collapse" aria-label="Collapse section">-</button></header>
+  <div class="win-b">
+    <p>You never need to edit this by hand, but it's plain JSON if you're curious or want to build tooling around it.</p>
+<pre data-lang="json"><code>{
+  "v": 1,
+  "name": "Intro",
+  "fps": 30,
+  "dur": 6.5,
+  "loop": false,
+  "cam": [ { "t": 0, "c": [12 numbers], "f": 70, "s": "Linear", "d": "Out" } ],
+  "rigs": [ { "n": "Knight", "p": ["Workspace","Knight"],
+              "b": [ { "p": ["Torso","Right Arm"], "m": true,
+                       "k": [ { "t": 0, "c": [12 numbers] } ] } ] } ],
+  "objs": [ { "p": ["Workspace","Lamp"],
+              "props": [ { "n": "Brightness", "k": [ { "t": 0, "v": ["n", 0] } ] } ] } ],
+  "marks": [ { "t": 1.2, "n": "Sound", "v": "Door_Slam" } ],
+  "fx": { "sp": [ { "t": 2, "v": 0.5 } ] }
+}</code></pre>
+    <div class="tw"><table>
+      <thead><tr><th>Field</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td><code>t</code></td><td class="wrap">Time in seconds.</td></tr>
+        <tr><td><code>c</code></td><td class="wrap">A CFrame as its 12 components.</td></tr>
+        <tr><td><code>f</code></td><td class="wrap">Field of view.</td></tr>
+        <tr><td><code>s</code>, <code>d</code>, <code>z</code></td><td class="wrap">Easing style, direction, and the four Bezier numbers.</td></tr>
+        <tr><td><code>p</code></td><td class="wrap">A path as a list of names. For rigs: from <code>game</code> to the rig. For bones: from the rig to the part.</td></tr>
+        <tr><td><code>m</code></td><td class="wrap">True if the bone is a Motor6D joint.</td></tr>
+        <tr><td><code>v</code></td><td class="wrap">A value. For objects it's tagged: <code>["n", 1]</code> for a number, <code>["c3", r, g, b]</code> for a color, <code>["v3", x, y, z]</code>, <code>["cf", ...12]</code>, <code>["b", true]</code>, and so on.</td></tr>
+        <tr><td><code>fx</code> keys</td><td class="wrap"><code>sp</code> shake pos, <code>sr</code> shake rot, <code>fq</code> shake Hz, <code>rl</code> roll, <code>fv</code> FOV add.</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</section>
+
+<section class="win" id="shortcuts" data-group="Reference" data-kw="keyboard shortcuts hotkeys keys mouse controls touch phone mobile gestures cheat sheet">
+  <header class="win-t"><h2>Shortcuts and controls</h2><button class="wb" data-act="collapse" aria-label="Collapse section">-</button></header>
+  <div class="win-b">
+    <h3 id="keyboard" data-kw="keyboard keys hotkeys">Keyboard</h3>
+    <div class="tw"><table>
+      <thead><tr><th>Key</th><th>Does</th></tr></thead>
+      <tbody>
+        <tr><td><kbd>Space</kbd></td><td class="wrap">Play / pause</td></tr>
+        <tr><td><kbd>&larr;</kbd> <kbd>&rarr;</kbd></td><td class="wrap">Step one frame back / forward</td></tr>
+        <tr><td><kbd>Home</kbd> <kbd>End</kbd></td><td class="wrap">Jump to start / end</td></tr>
+        <tr><td><kbd>I</kbd> or <kbd>K</kbd></td><td class="wrap">Key the selected track at the playhead</td></tr>
+        <tr><td><kbd>X</kbd> or <kbd>Delete</kbd></td><td class="wrap">Delete selected keys</td></tr>
+        <tr><td><kbd>G</kbd></td><td class="wrap">Move tool</td></tr>
+        <tr><td><kbd>R</kbd></td><td class="wrap">Rotate tool</td></tr>
+        <tr><td><kbd>Tab</kbd></td><td class="wrap">Toggle FK / IK</td></tr>
+        <tr><td><kbd>F</kbd> or numpad <kbd>.</kbd></td><td class="wrap">Focus the selected bone</td></tr>
+        <tr><td>Numpad <kbd>1</kbd> <kbd>3</kbd> <kbd>7</kbd></td><td class="wrap">Front / right / top view. Hold <kbd>Ctrl</kbd> for the opposite side.</td></tr>
+        <tr><td><kbd>Ctrl</kbd>+<kbd>Z</kbd></td><td class="wrap">Undo</td></tr>
+        <tr><td><kbd>Ctrl</kbd>+<kbd>Y</kbd> / <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Z</kbd></td><td class="wrap">Redo</td></tr>
+        <tr><td><kbd>Ctrl</kbd>+<kbd>C</kbd> / <kbd>Ctrl</kbd>+<kbd>V</kbd></td><td class="wrap">Copy / paste selected keys</td></tr>
+        <tr><td><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd><kbd>Q</kbd><kbd>E</kbd></td><td class="wrap">Fly the camera (while holding the right mouse button)</td></tr>
+      </tbody>
+    </table></div>
+    <p>Shortcuts are ignored while you're typing in a text box. The tool also grabs <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd>, the arrow keys and <kbd>Space</kbd> so your character doesn't wander off while you work.</p>
+
+    <h3 id="mouse" data-kw="mouse buttons wheel left right middle">Mouse</h3>
+    <div class="tw"><table>
+      <thead><tr><th>Where</th><th>Input</th><th>Does</th></tr></thead>
+      <tbody>
+        <tr><td>3D view</td><td>Left click</td><td class="wrap">Select a bone (or load a rig, with Load Rig on)</td></tr>
+        <tr><td>3D view</td><td>Right drag</td><td class="wrap">Look around, with <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd><kbd>Q</kbd><kbd>E</kbd> to fly. <kbd>Shift</kbd> = 3x speed.</td></tr>
+        <tr><td>3D view</td><td>Right drag + wheel</td><td class="wrap">Change fly speed</td></tr>
+        <tr><td>3D view</td><td>Middle drag</td><td class="wrap">Orbit. <kbd>Shift</kbd> pans, <kbd>Ctrl</kbd> zooms.</td></tr>
+        <tr><td>3D view</td><td>Wheel</td><td class="wrap">Dolly in / out</td></tr>
+        <tr><td>Timeline ruler</td><td>Click / drag</td><td class="wrap">Scrub</td></tr>
+        <tr><td>Timeline ruler or view bar</td><td>Wheel</td><td class="wrap">Zoom (ruler) / pan (view bar)</td></tr>
+        <tr><td>Timeline</td><td><kbd>Ctrl</kbd> + wheel</td><td class="wrap">Zoom</td></tr>
+        <tr><td>Timeline</td><td><kbd>Shift</kbd> + wheel, or middle drag</td><td class="wrap">Pan</td></tr>
+        <tr><td>Diamond</td><td>Click / <kbd>Ctrl</kbd>- or <kbd>Shift</kbd>-click / drag</td><td class="wrap">Select / add / retime</td></tr>
+        <tr><td>Properties style and dir buttons</td><td>Right click</td><td class="wrap">Cycle backward</td></tr>
+        <tr><td>Preview</td><td>Left / middle drag, wheel</td><td class="wrap">Steer the film camera (see <a href="#preview">Preview</a>)</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3 id="touch" data-kw="touch phone tablet mobile finger pinch tap drag orbit pan zoom multi select">Touch (phones and tablets)</h3>
+    <p>If the device has a touch screen and no keyboard, the tool switches to bigger buttons and touch controls.</p>
+    <ul>
+      <li><b>Tap</b> a part to select it. Tap a diamond to select a key.</li>
+      <li><b>Drag</b> in the world to move the camera. The <span class="ui">Drag: Orbit</span> button cycles <b>Orbit</b>, <b>Pan</b> and <b>Zoom</b>.</li>
+      <li><b>Two fingers</b> in the world: pinch to zoom and slide to pan. In the timeline: pinch to zoom the time range.</li>
+      <li><span class="ui">Multi-Select</span> acts like holding <kbd>Ctrl</kbd>. Double-tap empty timeline space and drag for a lasso.</li>
+      <li>Only the Timeline window opens at the start. Open the rest from the bottom bar.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="win" id="bar-reference" data-group="Reference" data-kw="bottom bar buttons reference list every button what does">
+  <header class="win-t"><h2>Bottom bar reference</h2><button class="wb" data-act="collapse" aria-label="Collapse section">-</button></header>
+  <div class="win-b">
+    <div class="tw"><table>
+      <thead><tr><th>Button</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td><span class="ui">Load Rig</span></td><td class="wrap">Then click a model in the world to load it as a rig.</td></tr>
+        <tr><td><span class="ui">Parts Folder</span></td><td class="wrap">Legacy. Loads <code>workspace.PartsFolder</code> as a rig. Kept for old projects; prefer Load Rig.</td></tr>
+        <tr><td><span class="ui">Move (G)</span> <span class="ui">Rotate (R)</span></td><td class="wrap">Choose the gizmo.</td></tr>
+        <tr><td><span class="ui">Space: World</span></td><td class="wrap">Toggle World / Local gizmo orientation.</td></tr>
+        <tr><td><span class="ui on">Snap: On</span></td><td class="wrap">Toggle gizmo snapping.</td></tr>
+        <tr><td><span class="ui">Mode: FK</span></td><td class="wrap">Toggle FK / IK. (<kbd>Tab</kbd>)</td></tr>
+        <tr><td><span class="ui">IK -</span> <span class="ui">Chain: 2</span> <span class="ui">IK +</span></td><td class="wrap">How many bones the IK chain includes (1 to 8).</td></tr>
+        <tr><td><span class="ui">Grab: End</span></td><td class="wrap">Grab the end of the chain, or the top with the end pinned.</td></tr>
+        <tr><td><span class="ui">Flip Bend</span></td><td class="wrap">Next IK drag bends the other way.</td></tr>
+        <tr><td><span class="ui on">Auto-Key: On</span></td><td class="wrap">Key automatically when you finish an edit.</td></tr>
+        <tr><td><span class="ui">Key</span></td><td class="wrap">Key the selected track at the playhead.</td></tr>
+        <tr><td><span class="ui">Undo</span> <span class="ui">Redo</span></td><td class="wrap">Step through history.</td></tr>
+        <tr><td><span class="ui">Play</span> / <span class="ui on">Pause</span></td><td class="wrap">Play or pause.</td></tr>
+        <tr><td><span class="ui">Drag: Orbit</span> <span class="ui">Multi-Select</span></td><td class="wrap">Touch only. See <a href="#touch">Touch</a>.</td></tr>
+        <tr><td><span class="ui">Cam View</span></td><td class="wrap">Look through the film camera.</td></tr>
+        <tr><td><span class="ui">Key Cam</span></td><td class="wrap">Key the camera from your current view.</td></tr>
+        <tr><td>Timeline, Properties, Camera, Sequence</td><td class="wrap">Show or hide that window.</td></tr>
+        <tr><td>Explorer, Object</td><td class="wrap">Show or hide the object tools.</td></tr>
+        <tr><td><span class="ui">Reset Objs</span></td><td class="wrap">Restore every tracked object's original values.</td></tr>
+        <tr><td>Easing, Cam FX, Physics, Preview</td><td class="wrap">Show or hide those windows.</td></tr>
+        <tr><td><span class="ui">Edit Cam</span></td><td class="wrap">Make the gizmo move the film camera.</td></tr>
+        <tr><td><span class="ui g">Export Film</span> <span class="ui">Import Film</span></td><td class="wrap">Save or load the entire scene as a film.</td></tr>
+        <tr><td><span class="ui">Import</span> <span class="ui g">EXPORT</span></td><td class="wrap">Read or write KeyframeSequences.</td></tr>
+        <tr><td><span class="ui r">X</span></td><td class="wrap">Close Film Maker: disconnects everything, removes rigs (restoring them), resets objects and camera, and deletes the GUI.</td></tr>
+      </tbody>
+    </table></div>
+    <p>The order on screen can differ slightly from this list, since some windows add their own buttons next to <span class="ui g">EXPORT</span> when they load.</p>
+  </div>
+</section>
+
+<section class="win" id="defaults" data-group="Reference" data-kw="defaults limits numbers range max min fps duration snap speed settings values">
+  <header class="win-t"><h2>Defaults and limits</h2><button class="wb" data-act="collapse" aria-label="Collapse section">-</button></header>
+  <div class="win-b">
+    <div class="tw"><table>
+      <thead><tr><th>Setting</th><th>Default</th><th>Range / note</th></tr></thead>
+      <tbody>
+        <tr><td>Length</td><td>10 s</td><td class="wrap">0.1 to 36,000 s. Grows if you key past the end.</td></tr>
+        <tr><td>FPS</td><td>30</td><td class="wrap">1 to 240</td></tr>
+        <tr><td>Editor playback speed</td><td>1</td><td class="wrap">0.05 to 8</td></tr>
+        <tr><td>Loop</td><td>On</td><td class="wrap"></td></tr>
+        <tr><td>Auto-Key</td><td>On</td><td class="wrap"></td></tr>
+        <tr><td>Sequence name</td><td><code>FilmMakerSequence</code></td><td class="wrap">Used for every export.</td></tr>
+        <tr><td>Sequence priority</td><td>Action</td><td class="wrap">Core, Idle, Movement, Action, Action2, Action3, Action4</td></tr>
+        <tr><td>Move snap</td><td>0.1 studs</td><td class="wrap">0 turns it off</td></tr>
+        <tr><td>Rotate snap</td><td>5 degrees</td><td class="wrap">0 turns it off</td></tr>
+        <tr><td>IK chain</td><td>2</td><td class="wrap">1 to 8</td></tr>
+        <tr><td>Fly speed</td><td>30 studs/s</td><td class="wrap">Box: 1 to 1000. Wheel while flying: 2 to 1000.</td></tr>
+        <tr><td>Field of view</td><td class="wrap">Your camera's</td><td class="wrap">1 to 120 (keyed camera: preview drag clamps to 5 to 120)</td></tr>
+        <tr><td>Undo history</td><td>60 steps</td><td class="wrap">Cleared when a rig is loaded or removed</td></tr>
+        <tr><td>Explorer rows</td><td>250</td><td class="wrap">Use the search box for the rest</td></tr>
+        <tr><td>Preview scene size</td><td class="wrap">About 5,000 parts</td><td class="wrap">Use Scope: Objects for bigger scenes</td></tr>
+        <tr><td>Part load wait</td><td>30 s / 40 s</td><td class="wrap">Parts 2 to 4 wait 30 s; Physics and Preview wait 40 s</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</section>
+
+<section class="win" id="troubleshooting" data-group="Help" data-kw="problem error fix broken not working warning message output help stuck bug">
+  <header class="win-t"><h2>Troubleshooting</h2><button class="wb" data-act="collapse" aria-label="Collapse section">-</button></header>
+  <div class="win-b">
+    <h3 id="messages" data-kw="status line messages meaning errors output warnings text">Messages you might see</h3>
+    <div class="tw"><table>
+      <thead><tr><th>Message</th><th>What it means and what to do</th></tr></thead>
+      <tbody>
+        <tr><td class="wrap"><i>Film Maker part N: part N-1 did not load</i></td><td class="wrap">An earlier script is missing or errored. Look for the first red error in the Output and fix that. Make sure every script is a LocalScript and they all run.</td></tr>
+        <tr><td class="wrap"><i>Click a model or part in the world to load it as a rig</i></td><td class="wrap">Load Rig is waiting for your click. Click the model.</td></tr>
+        <tr><td class="wrap"><i>workspace.PartsFolder not found</i></td><td class="wrap">Only for the legacy Parts Folder button, which needs a folder named exactly <code>PartsFolder</code> in Workspace. Use Load Rig instead.</td></tr>
+        <tr><td class="wrap"><i>PartsFolder has no parts</i></td><td class="wrap">The folder has no BaseParts inside.</td></tr>
+        <tr><td class="wrap"><i>Select a track first</i></td><td class="wrap">Key needs a selected track. Click a bone or a track name.</td></tr>
+        <tr><td class="wrap"><i>No rig selected</i></td><td class="wrap">Key Rig and rig-wide buttons need a rig. Click its header row or one of its bones.</td></tr>
+        <tr><td class="wrap"><i>Key the camera first: select the Camera track and press I</i></td><td class="wrap">Cam View needs at least one camera key.</td></tr>
+        <tr><td class="wrap"><i>Nothing to export: no keyframes yet</i></td><td class="wrap">Export only writes tracks that have keys.</td></tr>
+        <tr><td class="wrap"><i>Found X but no rig is loaded: Load Rig first, then Import</i></td><td class="wrap">Import matches poses to bones. Load the rig it belongs to.</td></tr>
+        <tr><td class="wrap"><i>No poses matched your loaded rig</i></td><td class="wrap">Bone names in the sequence don't match yours. The first few names it saw are in the message, and the full list is printed in the Output as <i>unmatched pose names</i>.</td></tr>
+        <tr><td class="wrap"><i>No KeyframeSequence found</i></td><td class="wrap">It looked in CurrentCamera, Workspace and ReplicatedStorage. Select one in Explorer to point it there.</td></tr>
+        <tr><td class="wrap"><i>No AxoFilm StringValue found</i></td><td class="wrap">Import Film couldn't find one. Select it in Explorer, or put one in ReplicatedStorage.</td></tr>
+        <tr><td class="wrap"><i>Could not read film data</i> / <i>bad film data</i></td><td class="wrap">The text isn't valid film JSON. Check that it wasn't cut off when you copied it.</td></tr>
+        <tr><td class="wrap"><i>N rig tracks skipped (load that rig first)</i></td><td class="wrap">The film mentions a rig that isn't in the game. Load or recreate it, then Import Film again.</td></tr>
+        <tr><td class="wrap"><i>Load a rig first (Load Rig or Parts Folder)</i></td><td class="wrap">Physics needs a rig in Ragdoll or Rigid Body mode.</td></tr>
+        <tr><td class="wrap"><i>Add objects first: select one in Explorer, then Add Selected</i></td><td class="wrap">Physics' Objects mode has an empty list.</td></tr>
+        <tr><td class="wrap"><i>Select a part or model in Explorer first</i></td><td class="wrap">Add Selected only takes parts and models.</td></tr>
+        <tr><td class="wrap"><i>Cannot clone ...</i></td><td class="wrap">The thing you're trying to bake can't be cloned (it may be archivable off). Pick something else.</td></tr>
+        <tr><td class="wrap"><i>Bake failed while writing keys</i></td><td class="wrap">Something went wrong turning the recording into keys. Details are in the Output as <i>physics write error</i>.</td></tr>
+        <tr><td class="wrap"><i>Could not set Property</i> / <i>Invalid value for Property</i></td><td class="wrap">The value didn't parse for that property type. See <a href="#value-formats">Typing values</a>.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3 id="common-problems" data-kw="common problems stuck gizmo missing select click rig not moving pose snaps back ik camera stuck preview empty">Common problems</h3>
+    <h4>My pose keeps snapping back when I scrub</h4>
+    <p>You edited with Auto-Key off, so the pose was never saved. Press <span class="ui">Key</span> (<kbd>I</kbd>) after you pose, or turn Auto-Key on.</p>
+    <h4>Clicking in the world doesn't select my rig</h4>
+    <p>Clicks on the UI don't pass through, so check you aren't clicking a window. Also the part must belong to a loaded rig. If it doesn't, open the Explorer to pick ordinary objects instead.</p>
+    <h4>No gizmo shows up</h4>
+    <p>It hides while playing, and it needs a selected bone (or a selected object that isn't part of a rig). Press <kbd>Space</kbd> to stop, then click the bone.</p>
+    <h4>IK doesn't move anything</h4>
+    <p>IK works on joint bones (from Motor6Ds) and with the <b>Move</b> tool. A free or root bone can't be solved. Select the end joint, and raise <span class="ui">Chain</span> if the limb is longer.</p>
+    <h4>The view is stuck on the film camera</h4>
+    <p>Orbit, fly or zoom to return to your editor view, or toggle <span class="ui">Cam View</span> off.</p>
+    <h4>My export doesn't match the editor</h4>
+    <p>Check that FPS and length match what you expect, that non-native easing was baked, and that the camera FX aren't in a plain KeyframeSequence. For a faithful copy of everything, use a film.</p>
+    <h4>The Preview is empty or missing things</h4>
+    <p>Press <span class="ui">Rebuild</span>. Terrain isn't shown, and very large scenes are cut off, so try <b>Scope: Objects</b>.</p>
+    <h4>Nothing happens when I press a key</h4>
+    <p>Shortcuts are paused while a text box has focus. Click on the 3D view first.</p>
+  </div>
+</section>
+
+<section class="win" id="faq" data-group="Help" data-kw="questions frequently asked save project mobile humanoid r15 r6 multiple rigs multiplayer server local client studio">
+  <header class="win-t"><h2>FAQ</h2><button class="wb" data-act="collapse" aria-label="Collapse section">-</button></header>
+  <div class="win-b">
+    <h4>Is there a Save button?</h4>
+    <p>No. Your project lives in memory while the tool is open. <span class="ui g">Export Film</span> gives you the entire scene as text you can keep, and <span class="ui">Import Film</span> loads it back. Do that before you close the game.</p>
+
+    <h4>Can I animate more than one character at once?</h4>
+    <p>Yes. Load as many rigs as you like. Each gets its own header and tracks, and exports separately.</p>
+
+    <h4>Does it work on mobile?</h4>
+    <p>Yes. It detects touch devices and gives you larger buttons, drag-to-orbit, pinch and a Multi-Select toggle. See <a href="#touch">Touch</a>.</p>
+
+    <h4>Does it work on Humanoid characters (R6, R15)?</h4>
+    <p>It works on anything made of parts. Motor6D joints (which R6 and R15 rigs use) become joint bones automatically. The Humanoid isn't required.</p>
+
+    <h4>Does it run on the server?</h4>
+    <p>No, the editor is a set of LocalScripts and works with the client's camera and GUI. The player is client-side too. If you need other players to see a cutscene, trigger it on each client.</p>
+
+    <h4>Why are some of my parts not on the timeline?</h4>
+    <p>Parts welded to a bone follow it and don't get their own track. Unwelded parts get a free track each.</p>
+
+    <h4>Why does Export create extra keys?</h4>
+    <p>That's easing being baked for styles Roblox doesn't support natively. See <a href="#easing-styles">Styles and directions</a>.</p>
+
+    <h4>Can AxoFilmPlayer play my KeyframeSequence?</h4>
+    <p>No. It is made only for films (<span class="ui g">Export Film</span>). For KeyframeSequences, use <code>KeyframeSequencePlayer</code>.</p>
+
+    <h4>Can I use the film player without Film Maker?</h4>
+    <p>Yes. The player is separate, and only needs the film.</p>
+
+    <h4>Why does everything export into CurrentCamera?</h4>
+    <p>Because anything placed in <code>CurrentCamera</code> becomes a persistent instance, so Studio Lite doesn't clear it. That's how your exports survive. See <a href="#export">Exporting</a>.</p>
+
+    <h4>Should I use the Parts Folder button?</h4>
+    <p>No. It's a legacy leftover from the first version and a rough way to handle rigs. Use <span class="ui">Load Rig</span> on a model instead.</p>
+
+    <h4>Where's the camera I exported?</h4>
+    <p>In <code>workspace.CurrentCamera</code>, as <code>Name_Camera</code>. See <a href="#export">Exporting</a>.</p>
+  </div>
+</section>
+
+<section class="win" id="roadmap" data-group="Help" data-kw="future roadmap upcoming plans standalone game collaboration collaborate smalltex prizma2sl integration studio lite limitations secret hints coming soon">
+  <header class="win-t"><h2>What's next (psst)</h2><button class="wb" data-act="collapse" aria-label="Collapse section">-</button></header>
+  <div class="win-b">
+    <p>A few hints about where Film Maker is heading. Nothing here is promised or dated, it's just the plan.</p>
+    <ul>
+      <li><b>A standalone game.</b> Film Maker is being planned as its own game that exports easily over to Studio Lite. Working outside Studio Lite means its limitations stop getting in the way, so there's a lot more room for flexibility.</li>
+      <li><b>Collaboration.</b> Working on animations together is on the wishlist, and a standalone game is what makes it possible.</li>
+      <li style="list-style:none"><span style="font-size:9px;color:var(--dim)">&gt; ;) prizma2sl integration</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="win" id="glossary" data-group="Help" data-kw="terms words definitions meaning vocabulary dictionary what is">
+  <header class="win-t"><h2>Glossary</h2><button class="wb" data-act="collapse" aria-label="Collapse section">-</button></header>
+  <div class="win-b">
+    <div class="tw"><table>
+      <thead><tr><th>Term</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td>Bake</td><td class="wrap">Record something computed (physics, or non-native easing) as plain keyframes.</td></tr>
+        <tr><td>Bone</td><td class="wrap">One animatable part of a rig. Has a track.</td></tr>
+        <tr><td>Cam View</td><td class="wrap">Looking through the film camera instead of your editor view.</td></tr>
+        <tr><td>Diamond</td><td class="wrap">The picture of a key on a track.</td></tr>
+        <tr><td>Easing</td><td class="wrap">How a value travels between two keys.</td></tr>
+        <tr><td>FK</td><td class="wrap">Forward kinematics: you rotate each joint yourself.</td></tr>
+        <tr><td>Film</td><td class="wrap">The whole scene saved as JSON, played by AxoFilmPlayer.</td></tr>
+        <tr><td>Follower</td><td class="wrap">A part welded to a bone that moves with it, without its own track.</td></tr>
+        <tr><td>Frustum</td><td class="wrap">The pyramid-shaped volume a camera sees. Drawn as orange lines.</td></tr>
+        <tr><td>IK</td><td class="wrap">Inverse kinematics: you place the end of a limb and the joints work themselves out.</td></tr>
+        <tr><td>Key / keyframe</td><td class="wrap">A value saved at a time.</td></tr>
+        <tr><td>Marker</td><td class="wrap">A named event on the timeline that your code can react to.</td></tr>
+        <tr><td>Playhead</td><td class="wrap">The yellow line showing the current time.</td></tr>
+        <tr><td>Pole</td><td class="wrap">The direction a joint bends in IK (like an elbow or knee).</td></tr>
+        <tr><td>Pose</td><td class="wrap">A bone's offset from its rest position.</td></tr>
+        <tr><td>Rig</td><td class="wrap">A model or group of parts you've loaded to animate.</td></tr>
+        <tr><td>Track</td><td class="wrap">One row on the timeline, holding the keys for a single thing.</td></tr>
+      </tbody>
+    </table></div>
+    <div class="endnav">That's everything. Go make something cool. &#9670;</div>
+  </div>
+</section>
+
+  </main>
+</div>
+
+<nav class="bar" aria-label="Quick navigation">
+  <div class="bar-in" id="barin">
+    <button class="b" id="toc">Contents</button>
+    <span class="dv"></span>
+    <a class="b" data-go="overview" href="#overview">Start here</a>
+    <a class="b" data-go="rigs" href="#rigs">Animating</a>
+    <a class="b" data-go="camera" href="#camera">Camera</a>
+    <a class="b" data-go="objects" href="#objects">Beyond rigs</a>
+    <a class="b" data-go="export" href="#export">Game</a>
+    <a class="b" data-go="shortcuts" href="#shortcuts">Reference</a>
+    <a class="b" data-go="troubleshooting" href="#troubleshooting">Help</a>
+    <span class="dv"></span>
+    <button class="b" id="expandall">Expand all</button>
+    <button class="b" id="collapseall">Collapse all</button>
+    <a class="b green" href="#install">Get started</a>
+    <a class="b" href="#top" id="totop">Top</a>
+  </div>
+</nav>
+
+<script>
+(function () {
+  "use strict";
+
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  var esc = function (s) {
+    return String(s).replace(/[&<>"]/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+    });
+  };
+  var clamp = function (v, a, b) { return Math.max(a, Math.min(b, v)); };
+  var OFFSET = 84;
+
+  var statusEl = $("#status");
+  var statusHint = statusEl ? statusEl.textContent : "";
+  var statusTimer = 0;
+  var toastEl = document.createElement("div");
+  toastEl.className = "toast";
+  toastEl.setAttribute("role", "status");
+  document.body.appendChild(toastEl);
+  var toastTimer = 0;
+  function say(msg, ms) {
+    if (!statusEl) return;
+    statusEl.textContent = msg;
+    clearTimeout(statusTimer);
+    statusTimer = setTimeout(function () { statusEl.textContent = statusHint; }, ms || 3000);
+    if (!statusEl.offsetParent) {
+      toastEl.textContent = msg;
+      toastEl.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(function () { toastEl.classList.remove("show"); }, ms || 3000);
+    }
+  }
+
+  var clicks = {};
+  function burst(key, n, ms, fn) {
+    var now = Date.now();
+    var a = (clicks[key] || []).filter(function (t) { return now - t < ms; });
+    a.push(now);
+    clicks[key] = a;
+    if (a.length >= n) { clicks[key] = []; fn(); }
+  }
+  function wiggle(el, cls, ms) {
+    el.classList.remove(cls);
+    void el.offsetWidth;
+    el.classList.add(cls);
+    setTimeout(function () { el.classList.remove(cls); }, ms);
+  }
+
+  var wins = $$(".win");
+
+  function slug(s) {
+    return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 48);
+  }
+
+  wins.forEach(function (w) {
+    var n = 0;
+    $$("h4", w).forEach(function (h) {
+      if (!h.id) {
+        var id = w.id + "-" + slug(h.textContent);
+        while (document.getElementById(id)) { n++; id = id + "-" + n; }
+        h.id = id;
+      }
+    });
+  });
+
+  var tree = $("#tree");
+  var sideEl = $("#side");
+  var scrim = $("#scrim");
+
+  function buildTree() {
+    var groups = [];
+    var map = {};
+    wins.forEach(function (w) {
+      var g = w.getAttribute("data-group") || "Docs";
+      if (!map[g]) { map[g] = []; groups.push(g); }
+      map[g].push(w);
+    });
+    var html = "";
+    groups.forEach(function (g) {
+      html += '<div class="gh"><i></i>' + esc(g) + "</div>";
+      map[g].forEach(function (w) {
+        var t = $("h2", w).textContent;
+        html += '<a class="row" href="#' + w.id + '" data-id="' + w.id + '">' + esc(t) + "</a>";
+        var subs = $$("h3", w);
+        if (subs.length) {
+          html += '<div class="subs" data-for="' + w.id + '">';
+          subs.forEach(function (h) {
+            html += '<a class="sub" href="#' + h.id + '" data-id="' + h.id + '">' + esc(h.textContent) + "</a>";
+          });
+          html += "</div>";
+        }
+      });
+    });
+    tree.innerHTML = html;
+  }
+  buildTree();
+
+  var entries = [];
+  function plain(n) {
+    var c = n.cloneNode(true);
+    $$("td, th, li, p, tr, div, br, h3, h4, pre", c).forEach(function (e) {
+      e.appendChild(document.createTextNode(" "));
+    });
+    return c.textContent;
+  }
+
+  function collect(start, stops) {
+    var out = [];
+    var n = start.nextElementSibling;
+    while (n && stops.indexOf(n.tagName) === -1) {
+      out.push(plain(n));
+      n = n.nextElementSibling;
+    }
+    return out.join(" ").replace(/\s+/g, " ").trim();
+  }
+
+  function buildIndex() {
+    wins.forEach(function (w) {
+      var title = $("h2", w).textContent;
+      var kw = w.getAttribute("data-kw") || "";
+      var body = $(".win-b", w);
+      var intro = [];
+      var c = body.firstElementChild;
+      while (c && c.tagName !== "H3" && c.tagName !== "H4") {
+        intro.push(plain(c));
+        c = c.nextElementSibling;
+      }
+      entries.push({
+        id: w.id, title: title, parent: "", kw: kw,
+        text: intro.join(" ").replace(/\s+/g, " ").trim(), top: true
+      });
+      $$("h3, h4", body).forEach(function (h) {
+        var stops = h.tagName === "H3" ? ["H3"] : ["H3", "H4"];
+        entries.push({
+          id: h.id, title: h.textContent, parent: title,
+          kw: (h.getAttribute("data-kw") || "") + " " + (h.tagName === "H4" ? kw : ""),
+          text: collect(h, stops), top: false
+        });
+      });
+    });
+    entries.forEach(function (e) {
+      e.lt = e.title.toLowerCase();
+      e.lk = e.kw.toLowerCase();
+      e.lx = e.text.toLowerCase();
+    });
+  }
+  buildIndex();
+
+  var q = $("#q");
+  var results = $("#results");
+  var hits = [];
+  var cur = -1;
+
+  function score(e, toks) {
+    var s = 0;
+    for (var i = 0; i < toks.length; i++) {
+      var t = toks[i];
+      var ti = e.lt.indexOf(t);
+      var ki = e.lk.indexOf(t);
+      var xi = e.lx.indexOf(t);
+      if (ti < 0 && ki < 0 && xi < 0) return 0;
+      if (ti >= 0) s += 10 + (ti === 0 || e.lt.charAt(ti - 1) === " " ? 6 : 0);
+      if (ki >= 0) s += 6 + (e.lk.charAt(ki - 1) === " " || ki === 0 ? 3 : 0);
+      if (xi >= 0) {
+        var count = 0;
+        var p = xi;
+        while (p >= 0 && count < 5) { count++; p = e.lx.indexOf(t, p + t.length); }
+        s += 1 + count;
+      }
+    }
+    if (toks.length > 1 && e.lt.indexOf(toks.join(" ")) >= 0) s += 12;
+    if (e.top) s += 1;
+    return s;
+  }
+
+  function mark(text, toks) {
+    var safe = esc(text);
+    toks.forEach(function (t) {
+      if (!t) return;
+      var re = new RegExp("(" + esc(t).replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + ")", "ig");
+      safe = safe.replace(re, "<mark>$1</mark>");
+    });
+    return safe;
+  }
+
+  function snippet(e, toks) {
+    var src = e.text || e.kw;
+    if (!src) return "";
+    var low = src.toLowerCase();
+    var at = -1;
+    for (var i = 0; i < toks.length; i++) {
+      var k = low.indexOf(toks[i]);
+      if (k >= 0 && (at < 0 || k < at)) at = k;
+    }
+    var from = at < 0 ? 0 : Math.max(0, at - 50);
+    var to = Math.min(src.length, from + 150);
+    var out = src.slice(from, to);
+    return (from > 0 ? "... " : "") + out + (to < src.length ? " ..." : "");
+  }
+
+  var EGGS = [
+    [/^axo(?:'?s)?(?: (?:film maker|stuff))?$/, ":3", "hi"],
+    [/^hfr$/, "user non-existent", "hfr"],
+    [/^azure$/, "epik", "azure"],
+    [/^leon$/, "playtester", "leon"],
+    [/^niko$/, "playtester", "niko"],
+    [/^ligma$/, "#ligma", "ligma"],
+    [/^(?:hi|hello|hey)$/, "hi :3", "hello"],
+    [/^bugs?$/, "it's a feature", "bug"],
+    [/^lag$/, "skill issue (jk, probably)", "lag"],
+    [/^42$/, "the answer. now what was the question", "42"],
+    [/^(?:sus|amogus)$/, "sus", "sus"],
+    [/^(?:noob|n00b)$/, "everyone starts somewhere", "noob"],
+    [/^(?:pizza|food)$/, "snack break. save your project first", "snack"],
+    [/^(?:cat|kitty|meow)$/, "mrrp", "cat"],
+    [/^(?:sleep|bed)$/, "one more keyframe", "sleep"],
+    [/^(?:gg|ez)$/, "gg", "gg"],
+    [/^(?:meaning of life)$/, "keyframes", "life"]
+  ];
+
+  function egg(raw) {
+    for (var i = 0; i < EGGS.length; i++) {
+      if (EGGS[i][0].test(raw)) return EGGS[i][1];
+    }
+    return null;
+  }
+
+  function render() {
+    var raw = q.value.trim().toLowerCase();
+    if (!raw) { close(); return; }
+    var toks = raw.split(/\s+/).filter(Boolean);
+    hits = entries
+      .map(function (e) { return { e: e, s: score(e, toks) }; })
+      .filter(function (h) { return h.s > 0; })
+      .sort(function (a, b) { return b.s - a.s; })
+      .slice(0, 12);
+    cur = hits.length ? 0 : -1;
+    var html = "";
+    var secret = egg(raw);
+    if (secret !== null) {
+      html += '<div class="rh">secret</div><div class="egg">' + esc(secret) + "</div>";
+    }
+    if (!hits.length) {
+      if (secret === null) html += '<div class="none">Nothing found for <b>' + esc(q.value.trim()) +
+        "</b>. Try a shorter word, like <b>ik</b>, <b>key</b>, <b>export</b> or <b>camera</b>.</div>";
+    } else {
+      html += '<div class="rh">' + hits.length + (hits.length === 1 ? " result" : " results") + "</div>";
+      hits.forEach(function (h, i) {
+        html += '<a class="r' + (i === 0 ? " sel" : "") + '" href="#' + h.e.id + '" data-i="' + i + '" role="option">' +
+          '<span class="rt">' + mark(h.e.title, toks) + "</span>" +
+          (h.e.parent ? '<span class="rp">' + esc(h.e.parent) + "</span>" : "") +
+          '<div class="rs">' + mark(snippet(h.e, toks), toks) + "</div></a>";
+      });
+    }
+    results.innerHTML = html;
+    results.classList.add("show");
+  }
+
+  function close() {
+    results.classList.remove("show");
+    results.innerHTML = "";
+    hits = [];
+    cur = -1;
+  }
+
+  function setCur(i) {
+    var rows = $$("a.r", results);
+    if (!rows.length) return;
+    cur = (i + rows.length) % rows.length;
+    rows.forEach(function (r, k) { r.classList.toggle("sel", k === cur); });
+    var el = rows[cur];
+    var top = el.offsetTop;
+    var bottom = top + el.offsetHeight;
+    if (top < results.scrollTop) results.scrollTop = top - 24;
+    else if (bottom > results.scrollTop + results.clientHeight) results.scrollTop = bottom - results.clientHeight;
+  }
+
+  q.addEventListener("input", render);
+  q.addEventListener("focus", function () { if (q.value.trim()) render(); });
+  q.addEventListener("keydown", function (ev) {
+    if (ev.key === "ArrowDown") { ev.preventDefault(); setCur(cur + 1); }
+    else if (ev.key === "ArrowUp") { ev.preventDefault(); setCur(cur - 1); }
+    else if (ev.key === "Enter") {
+      ev.preventDefault();
+      if (hits[cur]) { go(hits[cur].e.id, true); q.blur(); close(); }
+    } else if (ev.key === "Escape") {
+      if (q.value) q.value = "";
+      close();
+      q.blur();
+    }
+  });
+  results.addEventListener("mousemove", function (ev) {
+    var a = ev.target.closest && ev.target.closest("a.r");
+    if (a) {
+      var i = +a.getAttribute("data-i");
+      if (i !== cur) {
+        cur = i;
+        $$("a.r", results).forEach(function (r, k) { r.classList.toggle("sel", k === cur); });
+      }
+    }
+  });
+  results.addEventListener("mousedown", function (ev) { ev.preventDefault(); });
+  document.addEventListener("click", function (ev) {
+    if (!ev.target.closest(".searchbox")) close();
+  });
+  document.addEventListener("keydown", function (ev) {
+    if (ev.key === "/" && !ev.ctrlKey && !ev.metaKey && !ev.altKey) {
+      var t = ev.target;
+      var typing = t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable);
+      if (!typing) { ev.preventDefault(); q.focus(); q.select(); }
+    }
+  });
+
+  function go(id, push) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    var w = el.closest(".win");
+    if (w && w.classList.contains("collapsed")) setCollapsed(w, false);
+    var y = el.getBoundingClientRect().top + window.pageYOffset - OFFSET;
+    window.scrollTo({ top: Math.max(0, y), behavior: "smooth" });
+    if (push && history.pushState) history.pushState(null, "", "#" + id);
+    var target = w || el;
+    target.classList.remove("flash");
+    void target.offsetWidth;
+    target.classList.add("flash");
+    setTimeout(function () { target.classList.remove("flash"); }, 1200);
+    closeDrawer();
+  }
+
+  document.addEventListener("click", function (ev) {
+    var a = ev.target.closest && ev.target.closest('a[href^="#"]');
+    if (!a) return;
+    var id = a.getAttribute("href").slice(1);
+    if (id === "top") {
+      ev.preventDefault();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      closeDrawer();
+      return;
+    }
+    if (!document.getElementById(id)) return;
+    ev.preventDefault();
+    if (a.closest(".results")) { close(); q.blur(); }
+    go(id, true);
+  });
+
+  window.addEventListener("hashchange", function () {
+    var id = location.hash.slice(1);
+    if (id) go(id, false);
+  });
+
+  function setCollapsed(w, on) {
+    w.classList.toggle("collapsed", on);
+    var b = $(".wb", w);
+    if (b) {
+      b.textContent = on ? "+" : "-";
+      b.setAttribute("aria-label", on ? "Expand section" : "Collapse section");
+    }
+  }
+
+  document.addEventListener("click", function (ev) {
+    var b = ev.target.closest && ev.target.closest('.wb[data-act="collapse"]');
+    if (b) setCollapsed(b.closest(".win"), !b.closest(".win").classList.contains("collapsed"));
+  });
+  $$(".win-t").forEach(function (t) {
+    t.addEventListener("dblclick", function (ev) {
+      if (ev.target.closest("button")) return;
+      var w = t.closest(".win");
+      setCollapsed(w, !w.classList.contains("collapsed"));
+    });
+  });
+
+  var expandAll = $("#expandall");
+  var collapseAll = $("#collapseall");
+  if (expandAll) expandAll.addEventListener("click", function () {
+    wins.forEach(function (w) { setCollapsed(w, false); });
+    say("Expanded all sections");
+  });
+  if (collapseAll) collapseAll.addEventListener("click", function () {
+    wins.forEach(function (w) { setCollapsed(w, true); });
+    say("Collapsed all sections");
+  });
+
+  function openDrawer() { sideEl.classList.add("open"); scrim.classList.add("show"); }
+  function closeDrawer() { sideEl.classList.remove("open"); scrim.classList.remove("show"); }
+  var toc = $("#toc");
+  if (toc) toc.addEventListener("click", function () {
+    if (sideEl.classList.contains("open")) closeDrawer(); else openDrawer();
+  });
+  var sideClose = $("#sideclose");
+  if (sideClose) sideClose.addEventListener("click", closeDrawer);
+  scrim.addEventListener("click", closeDrawer);
+
+  var ticking = false;
+  var lastWin = null;
+  var lastSub = null;
+  function spy() {
+    ticking = false;
+    var active = wins[0];
+    for (var i = 0; i < wins.length; i++) {
+      if (wins[i].getBoundingClientRect().top <= OFFSET + 30) active = wins[i];
+    }
+    var sub = null;
+    var hs = $$("h3", active);
+    for (var j = 0; j < hs.length; j++) {
+      if (hs[j].getBoundingClientRect().top <= OFFSET + 30) sub = hs[j];
+    }
+    var nearBottom = window.innerHeight + window.pageYOffset >= document.documentElement.scrollHeight - 4;
+    if (nearBottom) active = wins[wins.length - 1];
+    if (active === lastWin && sub === lastSub) return;
+    lastWin = active;
+    lastSub = sub;
+    $$("a.row", tree).forEach(function (r) { r.classList.toggle("active", r.getAttribute("data-id") === active.id); });
+    $$(".subs", tree).forEach(function (s) { s.classList.toggle("open", s.getAttribute("data-for") === active.id); });
+    $$("a.sub", tree).forEach(function (s) { s.classList.toggle("active", !!sub && s.getAttribute("data-id") === sub.id); });
+    var row = $('a.row[data-id="' + active.id + '"]', tree);
+    if (row) {
+      var tr = tree.getBoundingClientRect();
+      var rr = row.getBoundingClientRect();
+      if (rr.top < tr.top + 4 || rr.bottom > tr.bottom - 4) {
+        tree.scrollTop += rr.top - tr.top - tree.clientHeight / 3;
+      }
+    }
+  }
+  window.addEventListener("scroll", function () {
+    if (!ticking) { ticking = true; requestAnimationFrame(spy); }
+  }, { passive: true });
+  window.addEventListener("resize", spy);
+
+  var KW = {
+    lua: "and break do else elseif end false for function if in local nil not or repeat return then true until while",
+    json: "true false null"
+  };
+
+  function highlight(code, lang) {
+    var kws = {};
+    (KW[lang] || "").split(" ").forEach(function (k) { kws[k] = 1; });
+    var re = lang === "lua"
+      ? /(--[^\n]*)|("(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*')|(\b\d+(?:\.\d+)?\b)|([A-Za-z_][A-Za-z0-9_]*)|([\s\S])/g
+      : /("(?:[^"\\\n]|\\.)*"(?=\s*:))|("(?:[^"\\\n]|\\.)*")|(-?\b\d+(?:\.\d+)?(?:e[+-]?\d+)?\b)|([A-Za-z_][A-Za-z0-9_]*)|([\s\S])/g;
+    var out = "";
+    var m;
+    while ((m = re.exec(code))) {
+      if (lang === "lua") {
+        if (m[1]) out += '<span class="c">' + esc(m[1]) + "</span>";
+        else if (m[2]) out += '<span class="s">' + esc(m[2]) + "</span>";
+        else if (m[3]) out += '<span class="n">' + esc(m[3]) + "</span>";
+        else if (m[4]) {
+          var after = code.charAt(re.lastIndex);
+          if (kws[m[4]]) out += '<span class="k">' + m[4] + "</span>";
+          else if (after === "(" || after === "{" || after === '"') out += '<span class="f">' + m[4] + "</span>";
+          else out += esc(m[4]);
+        } else out += esc(m[5]);
+      } else {
+        if (m[1]) out += '<span class="f">' + esc(m[1]) + "</span>";
+        else if (m[2]) out += '<span class="s">' + esc(m[2]) + "</span>";
+        else if (m[3]) out += '<span class="n">' + esc(m[3]) + "</span>";
+        else if (m[4]) out += kws[m[4]] ? '<span class="k">' + m[4] + "</span>" : esc(m[4]);
+        else out += esc(m[5]);
+      }
+    }
+    return out;
+  }
+
+  $$("pre").forEach(function (pre) {
+    var code = $("code", pre);
+    if (!code) return;
+    var lang = pre.getAttribute("data-lang");
+    var raw = code.textContent;
+    if (lang === "lua" || lang === "json") code.innerHTML = highlight(raw, lang);
+    var b = document.createElement("button");
+    b.className = "copy";
+    b.type = "button";
+    b.textContent = "Copy";
+    b.addEventListener("click", function () {
+      var done = function () {
+        b.textContent = "Copied";
+        b.classList.add("done");
+        say("Copied code to clipboard");
+        setTimeout(function () { b.textContent = "Copy"; b.classList.remove("done"); }, 1400);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(raw).then(done, fallback);
+      } else fallback();
+      function fallback() {
+        var ta = document.createElement("textarea");
+        ta.value = raw;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand("copy"); done(); } catch (e) {}
+        document.body.removeChild(ta);
+      }
+    });
+    pre.appendChild(b);
+  });
+
+  (function miniTimeline() {
+    var root = $("#miniTL");
+    if (!root) return;
+    var DUR = 6;
+    var FPS = 30;
+    var tracks = [
+      { n: "Camera", cls: "cam", k: [0, 2.5, 5] },
+      { n: "Markers", cls: "evt", k: [1.2, 3.8], names: ["Footstep", "Door_Slam"] },
+      { n: "Right Arm", cls: "", k: [0, 1.5, 3, 4.5] },
+      { n: "Left Leg", cls: "", k: [0, 2, 4] }
+    ];
+    var time = 0;
+    var playing = false;
+    var last = 0;
+    var sel = null;
+    var evTimer = 0;
+
+    var h = '<div class="mtl-tr">' +
+      '<button class="b" data-a="start" aria-label="Jump to start">|&lt;</button>' +
+      '<button class="b" data-a="play">Play</button>' +
+      '<button class="b" data-a="end" aria-label="Jump to end">&gt;|</button>' +
+      '<span class="mtl-time"></span><span class="mtl-ev"></span></div>' +
+      '<div class="mtl-g">';
+    h += '<div class="mtl-n head" style="grid-column:1;grid-row:1">Timeline</div>';
+    h += '<div class="mtl-r ruler" style="grid-column:2;grid-row:1">';
+    for (var s = 0; s < DUR; s++) {
+      h += '<span style="left:' + (s / DUR * 100) + '%">' + s + "s</span>";
+    }
+    h += "</div>";
+    tracks.forEach(function (t, i) {
+      var row = i + 2;
+      h += '<div class="mtl-n" style="grid-column:1;grid-row:' + row + '">' + t.n + "</div>";
+      h += '<div class="mtl-r ' + (i % 2 ? "b2" : "a") + '" style="grid-column:2;grid-row:' + row + '" data-row="' + i + '">';
+      t.k.forEach(function (kt, j) {
+        h += '<i class="dia ' + t.cls + '" style="left:' + (kt / DUR * 100) + '%" data-t="' + kt + '" data-k="' + i + "-" + j + '"></i>';
+      });
+      h += "</div>";
+    });
+    h += '<div class="mtl-pw" style="grid-column:2;grid-row:1 / span ' + (tracks.length + 1) + '"><div class="mtl-ph"></div></div></div>';
+    root.innerHTML = h;
+
+    var ph = $(".mtl-ph", root);
+    var timeEl = $(".mtl-time", root);
+    var evEl = $(".mtl-ev", root);
+    var playBtn = $('[data-a="play"]', root);
+    var ruler = $(".ruler", root);
+    var firstRow = $(".mtl-r.a", root);
+
+    function draw() {
+      ph.style.left = (time / DUR * 100) + "%";
+      timeEl.textContent = time.toFixed(2) + "s  F" + Math.round(time * FPS) + " / " + DUR * FPS;
+      playBtn.textContent = playing ? "Pause" : "Play";
+      playBtn.classList.toggle("on", playing);
+    }
+
+    function flag(name) {
+      evEl.textContent = "Marker: " + name;
+      clearTimeout(evTimer);
+      evTimer = setTimeout(function () { evEl.textContent = ""; }, 1400);
+    }
+
+    function setTime(t) {
+      time = clamp(Math.round(t * FPS) / FPS, 0, DUR);
+      draw();
+      if (Math.abs(time - 4.2) < 0.001) flag("Nice_Try");
+      if (time === DUR) flag("That_Is_All_Folks");
+    }
+
+    function crossed(a, b) {
+      tracks[1].k.forEach(function (mt, i) {
+        if (mt > a && mt <= b) flag(tracks[1].names[i]);
+      });
+    }
+
+    function tick(now) {
+      if (!playing) return;
+      var dt = (now - last) / 1000;
+      last = now;
+      var prev = time;
+      time += dt;
+      if (time >= DUR) {
+        crossed(prev, DUR);
+        time = 0;
+        prev = -1;
+      }
+      crossed(prev, time);
+      draw();
+      requestAnimationFrame(tick);
+    }
+
+    function play(on) {
+      playing = on;
+      if (on) {
+        if (time >= DUR) time = 0;
+        last = performance.now();
+        requestAnimationFrame(tick);
+      }
+      draw();
+    }
+
+    function fromX(ev) {
+      var r = firstRow.getBoundingClientRect();
+      return clamp((ev.clientX - r.left) / r.width, 0, 1) * DUR;
+    }
+
+    var drag = false;
+    function down(ev) {
+      if (ev.target.classList.contains("dia")) return;
+      drag = true;
+      play(false);
+      setTime(fromX(ev));
+      try { ev.currentTarget.setPointerCapture(ev.pointerId); } catch (e) {}
+    }
+    function move(ev) { if (drag) setTime(fromX(ev)); }
+    function up() { drag = false; }
+    $$(".mtl-r", root).forEach(function (r) {
+      r.addEventListener("pointerdown", down);
+      r.addEventListener("pointermove", move);
+      r.addEventListener("pointerup", up);
+      r.addEventListener("pointercancel", up);
+    });
+    ruler.style.touchAction = "none";
+
+    root.addEventListener("click", function (ev) {
+      var d = ev.target.closest(".dia");
+      if (d) {
+        $$(".dia", root).forEach(function (x) { x.classList.remove("sel"); });
+        if (sel === d) { sel = null; return; }
+        sel = d;
+        d.classList.add("sel");
+        play(false);
+        setTime(parseFloat(d.getAttribute("data-t")));
+        return;
+      }
+      var b = ev.target.closest("button[data-a]");
+      if (!b) return;
+      var a = b.getAttribute("data-a");
+      if (a === "play") {
+        play(!playing);
+        burst("play", 8, 4000, function () { flag("Calm_Down"); say("it's a 6 second clip, it's not going anywhere"); });
+      }
+      else if (a === "start") { play(false); setTime(0); }
+      else if (a === "end") { play(false); setTime(DUR); }
+    });
+
+    draw();
+  })();
+
+  (function easingLab() {
+    var root = $("#lab");
+    if (!root) return;
+
+    var C4 = (2 * Math.PI) / 3;
+    var bounceOut = function (t) {
+      var n = 7.5625, d = 2.75;
+      if (t < 1 / d) return n * t * t;
+      if (t < 2 / d) { t -= 1.5 / d; return n * t * t + 0.75; }
+      if (t < 2.5 / d) { t -= 2.25 / d; return n * t * t + 0.9375; }
+      t -= 2.625 / d;
+      return n * t * t + 0.984375;
+    };
+    var easeIn = {
+      Linear: function (t) { return t; },
+      Constant: function (t) { return t >= 1 ? 1 : 0; },
+      Cubic: function (t) { return t * t * t; },
+      Elastic: function (t) {
+        if (t === 0) return 0;
+        if (t === 1) return 1;
+        return -Math.pow(2, 10 * t - 10) * Math.sin((t * 10 - 10.75) * C4);
+      },
+      Bounce: function (t) { return 1 - bounceOut(1 - t); },
+      Sine: function (t) { return 1 - Math.cos((t * Math.PI) / 2); },
+      Quad: function (t) { return t * t; },
+      Quart: function (t) { return t * t * t * t; },
+      Quint: function (t) { return t * t * t * t * t; },
+      Back: function (t) { var c = 1.70158; return (c + 1) * t * t * t - c * t * t; },
+      Exponential: function (t) { return t === 0 ? 0 : Math.pow(2, 10 * t - 10); },
+      Circular: function (t) { return 1 - Math.sqrt(1 - t * t); }
+    };
+    var NATIVE = { Linear: 1, Constant: 1, Cubic: 1, Elastic: 1, Bounce: 1 };
+    var NODIR = { Linear: 1, Constant: 1, Bezier: 1 };
+    var styles = ["Linear", "Constant", "Cubic", "Elastic", "Bounce", "Sine", "Quad", "Quart", "Quint", "Back", "Exponential", "Circular", "Bezier"];
+    var dirs = ["In", "Out", "InOut"];
+    var presets = [
+      ["Ease", [0.42, 0, 0.58, 1]],
+      ["Ease In", [0.42, 0, 1, 1]],
+      ["Ease Out", [0, 0, 0.58, 1]],
+      ["Overshoot", [0.34, 1.56, 0.64, 1]],
+      ["Anticipate", [0.36, -0.4, 0.64, 1]],
+      ["Snap", [0.9, 0, 1, 0.1]]
+    ];
+
+    var captions = {
+      Linear: "boring, but honest",
+      Constant: "click. that's it.",
+      Cubic: "reliable",
+      Elastic: "boing",
+      Bounce: "boing boing",
+      Sine: "smooth operator",
+      Quad: "the default for a reason",
+      Quart: "getting spicy",
+      Quint: "very spicy",
+      Back: "wind-up before the pitch",
+      Exponential: "hold on... GO",
+      Circular: "slam the brakes",
+      Bezier: "you're the boss now"
+    };
+
+    var state = { style: "Quad", dir: "InOut", bz: [0.42, 0, 0.58, 1], prog: 0, playing: true, last: 0 };
+
+    function bez(t, p) {
+      var x1 = p[0], y1 = p[1], x2 = p[2], y2 = p[3];
+      var cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+      var cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+      var u = t;
+      for (var i = 0; i < 8; i++) {
+        var x = ((ax * u + bx) * u + cx) * u - t;
+        var dx = (3 * ax * u + 2 * bx) * u + cx;
+        if (Math.abs(x) < 1e-5) break;
+        if (Math.abs(dx) < 1e-6) break;
+        u -= x / dx;
+      }
+      if (u < 0 || u > 1) {
+        var lo = 0, hi = 1;
+        u = t;
+        for (var k = 0; k < 24; k++) {
+          var xx = ((ax * u + bx) * u + cx) * u;
+          if (xx < t) lo = u; else hi = u;
+          u = (lo + hi) / 2;
+        }
+      }
+      return ((ay * u + by) * u + cy) * u;
+    }
+
+    function ease(t) {
+      t = clamp(t, 0, 1);
+      if (state.style === "Bezier") return bez(t, state.bz);
+      var f = easeIn[state.style];
+      if (state.style === "Linear" || state.style === "Constant") return f(t);
+      if (state.dir === "In") return f(t);
+      if (state.dir === "Out") return 1 - f(1 - t);
+      return t < 0.5 ? f(t * 2) / 2 : 1 - f(2 - t * 2) / 2;
+    }
+
+    var W = 300, H = 240, PX = 24, PY = 22;
+    var gx = function (t) { return PX + t * (W - PX * 2); };
+    var gy = function (v) { return H - PY - ((v + 0.5) / 2) * (H - PY * 2); };
+
+    var html = '<div class="lab-body"><div>' +
+      '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Easing curve graph">' +
+      '<line x1="' + gx(0) + '" x2="' + gx(1) + '" y1="' + gy(0) + '" y2="' + gy(0) + '" stroke="#3a3a46" stroke-width="1"/>' +
+      '<line x1="' + gx(0) + '" x2="' + gx(1) + '" y1="' + gy(1) + '" y2="' + gy(1) + '" stroke="#3a3a46" stroke-width="1"/>' +
+      '<line x1="' + gx(0) + '" x2="' + gx(0) + '" y1="' + gy(-0.5) + '" y2="' + gy(1.5) + '" stroke="#3a3a46" stroke-width="1"/>' +
+      '<line x1="' + gx(1) + '" x2="' + gx(1) + '" y1="' + gy(-0.5) + '" y2="' + gy(1.5) + '" stroke="#3a3a46" stroke-width="1"/>' +
+      '<g id="labh" style="display:none"><line id="labl1" stroke="#6e8bff" stroke-width="1.5"/><line id="labl2" stroke="#6e8bff" stroke-width="1.5"/>' +
+      '<circle id="labp1" r="7" fill="#5078fa" style="cursor:grab;touch-action:none"/><circle id="labp2" r="7" fill="#5078fa" style="cursor:grab;touch-action:none"/></g>' +
+      '<polyline id="labc" fill="none" style="stroke:var(--key-sel)" stroke-width="2.5" stroke-linejoin="round"/>' +
+      '<circle id="labm" r="5" style="fill:var(--playhead)"/>' +
+      '<text x="' + (gx(0) - 4) + '" y="' + (gy(0) + 4) + '" fill="#8a8a99" font-size="10" text-anchor="end">0</text>' +
+      '<text x="' + (gx(0) - 4) + '" y="' + (gy(1) + 4) + '" fill="#8a8a99" font-size="10" text-anchor="end">1</text>' +
+      "</svg>" +
+      '<div class="trk"><i class="dot" id="labd"></i></div></div><div>' +
+      '<p class="lbl">Style</p><div class="row" id="labs"></div>' +
+      '<p class="lbl">Direction</p><div class="row" id="labdirs"></div>' +
+      '<div class="bz" id="labz"><p class="lbl">Bezier presets</p><div class="row" id="labps"></div><div class="bzv" id="labv"></div></div>' +
+      '<p class="lbl">On export</p><span class="badge" id="labb"></span><div class="bzv" id="labq" style="margin-top:6px"></div>' +
+      '<div class="row" style="margin-top:10px"><button class="b" id="labplay" type="button">Pause</button></div>' +
+      "</div></div>";
+    root.innerHTML = html;
+
+    var sRow = $("#labs", root), dRow = $("#labdirs", root), pRow = $("#labps", root);
+    sRow.innerHTML = styles.map(function (s) { return '<button class="b" type="button" data-s="' + s + '">' + s + "</button>"; }).join("");
+    dRow.innerHTML = dirs.map(function (d) { return '<button class="b" type="button" data-d="' + d + '">' + d + "</button>"; }).join("");
+    pRow.innerHTML = presets.map(function (p, i) { return '<button class="b" type="button" data-p="' + i + '">' + p[0] + "</button>"; }).join("");
+
+    var curve = $("#labc", root), marker = $("#labm", root), dot = $("#labd", root);
+    var hg = $("#labh", root);
+    var l1 = $("#labl1", root), l2 = $("#labl2", root), p1 = $("#labp1", root), p2 = $("#labp2", root);
+    var bzBox = $("#labz", root), bzv = $("#labv", root), badge = $("#labb", root);
+    var playB = $("#labplay", root);
+    var capEl = $("#labq", root);
+
+    function refresh() {
+      var pts = [];
+      for (var i = 0; i <= 120; i++) {
+        var t = i / 120;
+        pts.push(gx(t).toFixed(1) + "," + gy(ease(t)).toFixed(1));
+      }
+      curve.setAttribute("points", pts.join(" "));
+      $$("[data-s]", root).forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-s") === state.style); });
+      $$("[data-d]", root).forEach(function (b) {
+        b.classList.toggle("on", b.getAttribute("data-d") === state.dir && !NODIR[state.style]);
+        b.style.opacity = NODIR[state.style] ? 0.4 : 1;
+      });
+      var isB = state.style === "Bezier";
+      bzBox.classList.toggle("show", isB);
+      hg.style.display = isB ? "" : "none";
+      if (isB) {
+        var b = state.bz;
+        p1.setAttribute("cx", gx(b[0])); p1.setAttribute("cy", gy(b[1]));
+        p2.setAttribute("cx", gx(b[2])); p2.setAttribute("cy", gy(b[3]));
+        l1.setAttribute("x1", gx(0)); l1.setAttribute("y1", gy(0)); l1.setAttribute("x2", gx(b[0])); l1.setAttribute("y2", gy(b[1]));
+        l2.setAttribute("x1", gx(1)); l2.setAttribute("y1", gy(1)); l2.setAttribute("x2", gx(b[2])); l2.setAttribute("y2", gy(b[3]));
+        bzv.textContent = "x1 y1 x2 y2 = " + b.map(function (n) { return n.toFixed(2); }).join(", ");
+      }
+      var nat = !!NATIVE[state.style];
+      badge.className = "badge " + (nat ? "nat" : "bake");
+      badge.textContent = nat ? "Native easing in the KeyframeSequence" : "Baked into extra keys";
+      capEl.textContent = captions[state.style] || "";
+      place();
+    }
+
+    function place() {
+      var v = ease(state.prog);
+      marker.setAttribute("cx", gx(state.prog));
+      marker.setAttribute("cy", gy(v));
+      dot.style.left = (clamp(v, -0.4, 1.4) * 100) + "%";
+    }
+
+    root.addEventListener("click", function (ev) {
+      var b = ev.target.closest("button");
+      if (!b) return;
+      if (b.hasAttribute("data-s")) { state.style = b.getAttribute("data-s"); state.prog = 0; refresh(); }
+      else if (b.hasAttribute("data-d")) { state.dir = b.getAttribute("data-d"); state.prog = 0; refresh(); }
+      else if (b.hasAttribute("data-p")) { state.bz = presets[+b.getAttribute("data-p")][1].slice(); state.prog = 0; refresh(); }
+      else if (b.id === "labplay") {
+        burst("pause", 7, 5000, function () { say("you can't pause time that many times"); });
+        state.playing = !state.playing;
+        playB.textContent = state.playing ? "Pause" : "Play";
+        if (state.playing) { state.last = performance.now(); requestAnimationFrame(loop); }
+      }
+    });
+
+    var svg = $("svg", root);
+    var dragging = null;
+    function toGraph(ev) {
+      var r = svg.getBoundingClientRect();
+      var x = ((ev.clientX - r.left) / r.width) * W;
+      var y = ((ev.clientY - r.top) / r.height) * H;
+      var t = (x - PX) / (W - PX * 2);
+      var v = ((H - PY - y) / (H - PY * 2)) * 2 - 0.5;
+      return [clamp(t, 0, 1), clamp(v, -0.5, 1.5)];
+    }
+    [p1, p2].forEach(function (p, i) {
+      p.addEventListener("pointerdown", function (ev) {
+        dragging = i;
+        try { p.setPointerCapture(ev.pointerId); } catch (e) {}
+        ev.preventDefault();
+      });
+      p.addEventListener("pointermove", function (ev) {
+        if (dragging !== i) return;
+        var g = toGraph(ev);
+        state.bz[i * 2] = g[0];
+        state.bz[i * 2 + 1] = g[1];
+        refresh();
+      });
+      p.addEventListener("pointerup", function () { dragging = null; });
+      p.addEventListener("pointercancel", function () { dragging = null; });
+    });
+
+    var hold = 0;
+    function loop(now) {
+      if (!state.playing) return;
+      var dt = (now - state.last) / 1000;
+      state.last = now;
+      if (hold > 0) { hold -= dt; }
+      else {
+        state.prog += dt / 1.6;
+        if (state.prog >= 1) { state.prog = 1; hold = 0.6; }
+      }
+      if (hold <= 0 && state.prog >= 1) state.prog = 0;
+      place();
+      requestAnimationFrame(loop);
+    }
+
+    refresh();
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) {
+      state.playing = false;
+      playB.textContent = "Play";
+      state.prog = 1;
+      place();
+    } else {
+      state.last = performance.now();
+      requestAnimationFrame(loop);
+    }
+  })();
+
+  var brand = $(".brand");
+  if (brand) brand.addEventListener("click", function () {
+    burst("brand", 5, 2500, function () {
+      wiggle(brand, "spin", 900);
+      say("stop poking me");
+    });
+  });
+
+  document.addEventListener("click", function (ev) {
+    var t = ev.target;
+    if (!t.closest) return;
+    if (t.closest(".copy")) {
+      burst("copy", 5, 3000, function () { say("copy copy copy copy copy"); });
+    }
+    var wb = t.closest(".wb");
+    if (wb) {
+      burst("wb", 6, 3000, function () {
+        wiggle(wb.closest(".win"), "shake", 600);
+        say("stop it, it's just a button");
+      });
+    }
+    var k = t.closest("kbd");
+    if (k) {
+      wiggle(k, "press", 250);
+      say("that's a keycap, the real key works better ;)");
+    }
+  });
+
+  var HINTS = [
+    "RMB fly (WASD QE) | MMB orbit | Shift+MMB pan | wheel dolly | LMB select | G/R tool | I key | Space play | F focus",
+    "tip: Ctrl+Z is your best friend",
+    "tip: save your film before you close the tab",
+    "have you tried turning it off and on again",
+    "currently rendering: nothing, this is a website"
+  ];
+  var hintAt = 0;
+  if (statusEl) statusEl.addEventListener("click", function () {
+    hintAt = (hintAt + 1) % HINTS.length;
+    statusHint = HINTS[hintAt];
+    statusEl.textContent = statusHint;
+  });
+
+  var KONAMI = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"];
+  var kpos = 0;
+  var konamiTimer = 0;
+  document.addEventListener("keydown", function (ev) {
+    var t = ev.target;
+    if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA")) return;
+    var key = ev.key.length === 1 ? ev.key.toLowerCase() : ev.key;
+    if (key === KONAMI[kpos]) kpos++;
+    else kpos = key === KONAMI[0] ? 1 : 0;
+    if (kpos === KONAMI.length) {
+      kpos = 0;
+      document.body.classList.add("konami");
+      say("cheat enabled: +30 lives", 6000);
+      clearTimeout(konamiTimer);
+      konamiTimer = setTimeout(function () { document.body.classList.remove("konami"); }, 8000);
+    }
+  });
+
+  if (location.hash.length > 1) {
+    setTimeout(function () { go(location.hash.slice(1), false); }, 60);
+  }
+  spy();
+})();
+
+</script>
+</body>
+</html>
